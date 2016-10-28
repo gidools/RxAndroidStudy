@@ -14,6 +14,13 @@
 		android:text="Observable and Subscriber"/>
 
 	<Button
+		android:id="@+id/rx_lambda"
+		android:layout_width="250dp"
+		android:layout_height="wrap_content"
+		android:textSize="15sp"
+		android:text="Lambda Expression"/>
+
+	<Button
 		android:id="@+id/rx_map"
 		android:layout_width="250dp"
 		android:layout_height="wrap_content"
@@ -33,5 +40,19 @@
 		android:layout_height="wrap_content"
 		android:textSize="15sp"
 		android:text="Merge"/>
+
+	<Button
+		android:id="@+id/rx_scan"
+		android:layout_width="250dp"
+		android:layout_height="wrap_content"
+		android:textSize="15sp"
+		android:text="Scan"/>
+
+	<Button
+		android:id="@+id/rx_scan2"
+		android:layout_width="250dp"
+		android:layout_height="wrap_content"
+		android:textSize="15sp"
+		android:text="Scan 2"/>
 
 </LinearLayout>
