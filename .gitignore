@@ -1,6 +1,9 @@
 *.iml
 .gradle
 .ieda
+.ieda/
+/.ieda
+/.ieda/
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
