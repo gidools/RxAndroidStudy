@@ -34,6 +34,9 @@ public class MainFragment extends Fragment {
 		layout.findViewById(R.id.rx_merge).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.rx_scan).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.rx_scan2).setOnClickListener(onClickListener);
+		layout.findViewById(R.id.rx_combined_latest).setOnClickListener(onClickListener);
+		layout.findViewById(R.id.rx_combined_latest).setOnClickListener(onClickListener);
+		layout.findViewById(R.id.rx_map_vs_flat_map).setOnClickListener(onClickListener);
 		return layout;
 	}
 
@@ -68,6 +71,14 @@ public class MainFragment extends Fragment {
 
 				case R.id.rx_scan2:
 					clickedOn(new Scan2Fragment());
+					break;
+
+				case R.id.rx_combined_latest:
+					clickedOn(new CombinedLatestFragment());
+					break;
+
+				case R.id.rx_map_vs_flat_map:
+					clickedOn(new MapVsFlatMapFragment());
 					break;
 			}
 		}

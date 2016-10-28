@@ -55,4 +55,18 @@
 		android:textSize="15sp"
 		android:text="Scan 2"/>
 
+	<Button
+		android:id="@+id/rx_combined_latest"
+		android:layout_width="250dp"
+		android:layout_height="wrap_content"
+		android:textSize="15sp"
+		android:text="Combined Latest"/>
+
+	<Button
+		android:id="@+id/rx_map_vs_flat_map"
+		android:layout_width="250dp"
+		android:layout_height="wrap_content"
+		android:textSize="15sp"
+		android:text="Map vs FlatMap"/>
+
 </LinearLayout>
