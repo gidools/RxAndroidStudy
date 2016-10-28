@@ -69,4 +69,11 @@
 		android:textSize="15sp"
 		android:text="Map vs FlatMap"/>
 
+	<Button
+		android:id="@+id/scheduler_bg_work"
+		android:layout_width="250dp"
+		android:layout_height="wrap_content"
+		android:textSize="15sp"
+		android:text="Scheduler BG Work"/>
+
 </LinearLayout>

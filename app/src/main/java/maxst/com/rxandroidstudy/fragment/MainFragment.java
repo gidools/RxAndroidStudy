@@ -37,6 +37,7 @@ public class MainFragment extends Fragment {
 		layout.findViewById(R.id.rx_combined_latest).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.rx_combined_latest).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.rx_map_vs_flat_map).setOnClickListener(onClickListener);
+		layout.findViewById(R.id.scheduler_bg_work).setOnClickListener(onClickListener);
 		return layout;
 	}
 
@@ -79,6 +80,10 @@ public class MainFragment extends Fragment {
 
 				case R.id.rx_map_vs_flat_map:
 					clickedOn(new MapVsFlatMapFragment());
+					break;
+
+				case R.id.scheduler_bg_work:
+					clickedOn(new SchedulerBGWorkFragment());
 					break;
 			}
 		}
