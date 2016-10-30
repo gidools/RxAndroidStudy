@@ -39,6 +39,7 @@ public class MainFragment extends Fragment {
 		layout.findViewById(R.id.rx_map_vs_flat_map).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.scheduler_bg_work).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.debounce_emitter).setOnClickListener(onClickListener);
+		layout.findViewById(R.id.double_binding_text_view).setOnClickListener(onClickListener);
 		return layout;
 	}
 
@@ -89,6 +90,10 @@ public class MainFragment extends Fragment {
 
 				case R.id.debounce_emitter:
 					clickedOn(new DebounceSearchEmitterFragment());
+					break;
+
+				case R.id.double_binding_text_view:
+					clickedOn(new DoubleBindingTextViewFragment());
 					break;
 			}
 		}
