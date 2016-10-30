@@ -38,6 +38,7 @@ public class MainFragment extends Fragment {
 		layout.findViewById(R.id.rx_combined_latest).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.rx_map_vs_flat_map).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.scheduler_bg_work).setOnClickListener(onClickListener);
+		layout.findViewById(R.id.debounce_emitter).setOnClickListener(onClickListener);
 		return layout;
 	}
 
@@ -84,6 +85,10 @@ public class MainFragment extends Fragment {
 
 				case R.id.scheduler_bg_work:
 					clickedOn(new SchedulerBGWorkFragment());
+					break;
+
+				case R.id.debounce_emitter:
+					clickedOn(new DebounceSearchEmitterFragment());
 					break;
 			}
 		}
