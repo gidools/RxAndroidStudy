@@ -40,6 +40,7 @@ public class MainFragment extends Fragment {
 		layout.findViewById(R.id.scheduler_bg_work).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.debounce_emitter).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.double_binding_text_view).setOnClickListener(onClickListener);
+		layout.findViewById(R.id.buffer_demo).setOnClickListener(onClickListener);
 		return layout;
 	}
 
@@ -94,6 +95,10 @@ public class MainFragment extends Fragment {
 
 				case R.id.double_binding_text_view:
 					clickedOn(new DoubleBindingTextViewFragment());
+					break;
+
+				case R.id.buffer_demo:
+					clickedOn(new BufferDemoFragment());
 					break;
 			}
 		}

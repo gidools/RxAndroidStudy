@@ -96,6 +96,11 @@
 			android:text="Double binding text view"
 			android:textSize="15sp"/>
 
-
+		<Button
+			android:id="@+id/buffer_demo"
+			android:layout_width="250dp"
+			android:layout_height="wrap_content"
+			android:text="Buffer demo"
+			android:textSize="15sp"/>
 	</LinearLayout>
 </ScrollView>
