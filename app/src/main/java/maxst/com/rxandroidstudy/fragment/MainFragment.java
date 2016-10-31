@@ -42,6 +42,7 @@ public class MainFragment extends Fragment {
 		layout.findViewById(R.id.double_binding_text_view).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.buffer_demo).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.form_validation).setOnClickListener(onClickListener);
+		layout.findViewById(R.id.polling).setOnClickListener(onClickListener);
 		return layout;
 	}
 
@@ -104,6 +105,10 @@ public class MainFragment extends Fragment {
 
 				case R.id.form_validation:
 					clickedOn(new FormValidationFragment());
+					break;
+
+				case R.id.polling:
+					clickedOn(new PollingFragment());
 					break;
 			}
 		}
