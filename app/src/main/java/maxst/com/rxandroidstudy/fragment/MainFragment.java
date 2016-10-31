@@ -41,6 +41,7 @@ public class MainFragment extends Fragment {
 		layout.findViewById(R.id.debounce_emitter).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.double_binding_text_view).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.buffer_demo).setOnClickListener(onClickListener);
+		layout.findViewById(R.id.form_validation).setOnClickListener(onClickListener);
 		return layout;
 	}
 
@@ -99,6 +100,10 @@ public class MainFragment extends Fragment {
 
 				case R.id.buffer_demo:
 					clickedOn(new BufferDemoFragment());
+					break;
+
+				case R.id.form_validation:
+					clickedOn(new FormValidationFragment());
 					break;
 			}
 		}

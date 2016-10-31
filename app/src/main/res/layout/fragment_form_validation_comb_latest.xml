@@ -1,0 +1,96 @@
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	>
+
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center"
+		android:padding="10dp"
+		android:text="From validation, Combine latest"
+		/>
+
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		>
+
+		<TextView
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:padding="10dp"
+			android:text="Enter a valid email below:"
+			/>
+
+		<EditText
+			android:id="@+id/demo_combl_email"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:inputType="textEmailAddress"
+			/>
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		>
+
+		<TextView
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:padding="10dp"
+			android:text="password (> than 8 chrs):"
+			/>
+
+		<EditText
+			android:id="@+id/demo_combl_password"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			/>
+	</LinearLayout>
+
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		>
+
+		<TextView
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:padding="10dp"
+			android:text="number (between 1 &amp; 100):"
+			/>
+
+		<EditText
+			android:id="@+id/demo_combl_num"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:inputType="number"
+			/>
+	</LinearLayout>
+
+	<Button
+		android:id="@+id/btn_demo_form_valid"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:layout_marginTop="10dp"
+		android:padding="10dp"
+		android:text="Submit"
+		/>
+
+</LinearLayout>
