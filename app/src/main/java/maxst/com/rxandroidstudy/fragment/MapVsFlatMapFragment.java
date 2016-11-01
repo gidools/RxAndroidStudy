@@ -17,6 +17,10 @@ import com.jakewharton.rxbinding.widget.RxTextView;
 
 import maxst.com.rxandroidstudy.R;
 import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
+import rx.functions.Func1;
+import rx.functions.Func2;
 
 public class MapVsFlatMapFragment extends Fragment {
 
@@ -40,13 +44,16 @@ public class MapVsFlatMapFragment extends Fragment {
 		View layout = inflater.inflate(R.layout.fragment_map_vs_flat_map, container, false);
 
 		Observable.just("item1")
-				.map(str -> {
-					return str;
-				})
-				.subscribe(value -> ((TextView) layout.findViewById(R.id.textView1)).setText(value)
+//				.map(str -> str.toUpperCase())
+				.map(String::toUpperCase)
+				.subscribe(value -> {
+							Log.i(TAG, "onNext : " + value);
+							((TextView) layout.findViewById(R.id.textView1)).setText(value);
+						}
 						, error -> {
 						}
-						, () -> Log.i(TAG, "completed"));
+						, () -> Log.i(TAG, "item1 completed")
+				);
 
 		Observable.just("item2")
 				.map(str -> {
@@ -55,54 +62,97 @@ public class MapVsFlatMapFragment extends Fragment {
 
 					return Observable.just(str, str2, str3);
 				})
-				.subscribe(value -> ((TextView) layout.findViewById(R.id.textView2)).setText(value.toString())
+				.subscribe(value -> {
+							Log.i(TAG, "item2 onNext : " + value.toString());
+							((TextView) layout.findViewById(R.id.textView2)).setText(value.toString());
+						}
 						, error -> {
 						}
-						, () -> Log.i(TAG, "completed"));
+						, () -> Log.i(TAG, "item2 completed"));
 
 		Observable.just("item3")
-				.flatMap(str -> {
+				.map(str -> {
 					String str2 = str + "++";
 					String str3 = str + "++++";
 
-					return Observable.just(str, str2, str3);
+					return Observable.from(new String[]{str, str2, str3});
 				})
 				.subscribe(value -> {
-							Log.i(TAG, "onNext : " + value);
-							((TextView) layout.findViewById(R.id.textView3)).setText(value);
+							Log.i(TAG, "item3 onNext : " + value);
+							((TextView) layout.findViewById(R.id.textView3)).setText(value.toString());
 						}
-						, error -> {
-						}
-						, () -> Log.i(TAG, "completed"));
+				);
 
-		Observable.just("item4")
-				.flatMap(str -> {
-					String str2 = str + "++";
-					String str3 = str + "++++";
-
-					return Observable.just(new String[] {str, str2, str3});
-				})
+		Observable.from(new String[]{"item4", "item4++", "item4++++"})
+				.scan("", (oldStr, newStr) -> oldStr + newStr + " ")
 				.subscribe(value -> {
-							Log.i(TAG, "onNext : " + value.toString());
-							((TextView) layout.findViewById(R.id.textView4)).setText(value.toString());
+							Log.i(TAG, "item4 onNext : " + value);
+							((TextView) layout.findViewById(R.id.textView4)).setText(value);
 						}
-						, error -> {
-						}
-						, () -> Log.i(TAG, "completed"));
+				);
 
 		Observable.just("item5")
 				.flatMap(str -> {
 					String str2 = str + "++";
 					String str3 = str + "++++";
 
-					return Observable.from(new String[] {str, str2, str3});
+					return Observable.just(str, str2, str3);
+				})
+				.scan("", (oldStr, newStr) -> oldStr + newStr + " ")
+				.subscribe(value -> {
+					Log.i(TAG, "item5 onNext : " + value);
+					((TextView) layout.findViewById(R.id.textView5)).setText(value);
+				}, error -> {
+				}, () -> Log.i(TAG, "item5 completed"));
+
+		Observable.just("item6")
+				.flatMap(str -> {
+					String str2 = str + "++";
+					String str3 = str + "++++";
+
+					return Observable.just(new String[]{str, str2, str3});
 				})
 				.subscribe(value -> {
-							Log.i(TAG, "onNext : " + value);
-							((TextView) layout.findViewById(R.id.textView5)).setText(value) ;}
-						, error -> {
-						}
-						, () -> Log.i(TAG, "completed"));
+							Log.i(TAG, "item6 onNext : " + value.toString());
+							((TextView) layout.findViewById(R.id.textView6)).setText(value.toString());
+						}, error -> {
+						}, () -> Log.i(TAG, "item6 completed"));
+
+		Observable.just("item7")
+				.flatMap(str -> {
+					String str2 = str + "++";
+					String str3 = str + "++++";
+
+					return Observable.just(new String[]{str, str2, str3});
+				})
+				.map(strArray -> {
+					StringBuilder builder = new StringBuilder();
+					for(String str : strArray) {
+						builder.append(str);
+						builder.append(" ");
+					}
+
+					return builder.toString();
+				})
+				.subscribe(value -> {
+					Log.i(TAG, "item7 onNext : " + value);
+					((TextView) layout.findViewById(R.id.textView7)).setText(value);
+				}, error -> {
+				}, () -> Log.i(TAG, "item7 completed"));
+
+		Observable.just("item8")
+				.flatMap(str -> {
+					String str2 = str + "++";
+					String str3 = str + "++++";
+
+					return Observable.from(new String[]{str, str2, str3});
+				})
+				.scan("", (oldStr, newStr) -> oldStr + newStr + " ")
+				.subscribe(value -> {
+							Log.i(TAG, "item8 onNext : " + value);
+							((TextView) layout.findViewById(R.id.textView8)).setText(value);
+						}, error -> {
+						}, () -> Log.i(TAG, "item8 completed"));
 
 		return layout;
 	}
