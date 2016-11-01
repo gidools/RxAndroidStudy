@@ -82,10 +82,26 @@ public class SchedulerBGWorkFragment extends Fragment {
 		logAdapter.clear();
 		addLog("Button Clicked");
 
-		Subscription s = getObservable()
+		Subscription s = Observable.just(true)
+				.map(new Func1<Boolean, Boolean>() {
+					@Override
+					public Boolean call(Boolean aBoolean) {
+						addLog("Within Observable");
+						doSomeLongOperationThatBlocksCurrentThread();
+						return aBoolean;
+					}
+				})
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(getObserver()); // Observer
+				.subscribe(onNext -> addLog(String.format("onNext with return value \"%b\"", onNext)),
+						onError -> {
+							addLog(String.format("Boo! Error %s", onError.getMessage()));
+							progressBar.setVisibility(View.INVISIBLE);
+						},
+						() -> {
+							addLog("On complete");
+							progressBar.setVisibility(View.INVISIBLE);
+						}); // Observer
 
 		compositeSubscription.add(s);
 	}
@@ -120,16 +136,16 @@ public class SchedulerBGWorkFragment extends Fragment {
 //		});
 //	}
 
-	private Observable<Boolean> getObservable() {
-		return Observable.just(true).map(new Func1<Boolean, Boolean>() {
-			@Override
-			public Boolean call(Boolean aBoolean) {
-				addLog("Within Observable");
-				doSomeLongOperationThatBlocksCurrentThread();
-				return aBoolean;
-			}
-		});
-	}
+//	private Observable<Boolean> getObservable() {
+//		return Observable.just(true).map(new Func1<Boolean, Boolean>() {
+//			@Override
+//			public Boolean call(Boolean aBoolean) {
+//				addLog("Within Observable");
+//				doSomeLongOperationThatBlocksCurrentThread();
+//				return aBoolean;
+//			}
+//		});
+//	}
 
 	private Observer<Boolean> getObserver() {
 		return new Observer<Boolean>() {
