@@ -90,6 +90,7 @@
 		android:layout_gravity="center"
 		android:layout_marginTop="10dp"
 		android:padding="10dp"
+		android:enabled="false"
 		android:text="Submit"
 		/>
 

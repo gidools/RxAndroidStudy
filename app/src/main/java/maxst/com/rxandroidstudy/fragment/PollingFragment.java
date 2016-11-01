@@ -37,7 +37,7 @@ public class PollingFragment extends Fragment {
 
 	private static final int INITIAL_DELAY = 0;
 	private static final int POLLING_INTERVAL = 1000;
-	private static final int POLL_COUNT = 8;
+	private static final int POLL_COUNT = 3;
 
 	@Bind(R.id.list_threading_log)
 	ListView logListView;
@@ -77,16 +77,18 @@ public class PollingFragment extends Fragment {
 
 		compositeSubscription.add(
 				Observable.interval(INITIAL_DELAY, POLLING_INTERVAL, TimeUnit.MICROSECONDS)
+//				Observable.interval(INITIAL_DELAY, POLLING_INTERVAL * 2, TimeUnit.MILLISECONDS)
 						.map(this::doNetworkCallAndStringResult)
 						.take(pollingCount)
 						.doOnSubscribe(() -> {
-							addLog(String.format("Start simple polling - %s", count));
+							addLog(String.format("Start simple polling - %s [%d]", count, getSecondHand()));
 						})
 						.subscribe(taskName -> {
 							addLog(String.format(Locale.US, "Executing polled task [%s] now time : [xx:%02d]",
 									taskName, getSecondHand()));
-						}));
-
+						}, error -> {
+						}, () -> addLog("Completed")
+						));
 	}
 
 	@OnClick(R.id.btn_start_increasingly_delayed_polling)
