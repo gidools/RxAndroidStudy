@@ -58,8 +58,7 @@ public class ObservableAndSubscriberFragment extends Fragment {
 
 	private void setSubscriber1(Observable<String> observable) {
 
-		observable
-				.subscribe(new Subscriber<String>() {
+		observable.subscribe(new Subscriber<String>() {
 					@Override
 					public void onCompleted() {
 						Log.d(TAG, "complete!");
@@ -79,8 +78,7 @@ public class ObservableAndSubscriberFragment extends Fragment {
 
 	private void setSubscriber2(Observable<String> observable) {
 
-		observable
-				.subscribe(new Action1<String>() {
+		observable.subscribe(new Action1<String>() {
 							   @Override
 							   public void call(String input) {
 								   ((TextView) getView().findViewById(R.id.textView2)).setText("length: " + input.length());
