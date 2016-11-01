@@ -13,9 +13,6 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action0;
 import rx.functions.Action1;
-import rx.functions.Func1;
-
-import static android.content.ContentValues.TAG;
 
 public class ObservableAndSubscriberFragment extends Fragment {
 

@@ -25,6 +25,7 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
@@ -111,11 +112,22 @@ public class SchedulerBGWorkFragment extends Fragment {
 		logListView.setAdapter(logAdapter);
 	}
 
+//	private Observable<Boolean> getObservable() {
+//		return Observable.just(true).map(aBoolean -> {
+//			addLog("Within Observable");
+//			doSomeLongOperationThatBlocksCurrentThread();
+//			return aBoolean;
+//		});
+//	}
+
 	private Observable<Boolean> getObservable() {
-		return Observable.just(true).map(aBoolean -> {
-			addLog("Within Observable");
-			doSomeLongOperationThatBlocksCurrentThread();
-			return aBoolean;
+		return Observable.just(true).map(new Func1<Boolean, Boolean>() {
+			@Override
+			public Boolean call(Boolean aBoolean) {
+				addLog("Within Observable");
+				doSomeLongOperationThatBlocksCurrentThread();
+				return aBoolean;
+			}
 		});
 	}
 
