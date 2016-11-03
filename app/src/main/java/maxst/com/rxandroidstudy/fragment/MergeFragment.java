@@ -11,7 +11,6 @@ import com.jakewharton.rxbinding.view.RxView;
 
 import maxst.com.rxandroidstudy.R;
 import rx.Observable;
-import rx.functions.Action1;
 
 public class MergeFragment extends Fragment {
 

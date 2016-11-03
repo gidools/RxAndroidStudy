@@ -11,8 +11,6 @@ import android.widget.TextView;
 import maxst.com.rxandroidstudy.R;
 import rx.Observable;
 import rx.Subscriber;
-import rx.functions.Action0;
-import rx.functions.Action1;
 import rx.functions.Func1;
 
 public class MapFragment extends Fragment {

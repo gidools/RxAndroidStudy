@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
-import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

@@ -12,9 +12,6 @@ import java.util.Random;
 
 import maxst.com.rxandroidstudy.R;
 import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Action0;
-import rx.functions.Action1;
 
 public class LambdaFragment extends Fragment {
 

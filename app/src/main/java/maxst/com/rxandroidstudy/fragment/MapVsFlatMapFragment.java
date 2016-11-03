@@ -2,25 +2,14 @@ package maxst.com.rxandroidstudy.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.TextView;
-
-import com.jakewharton.rxbinding.widget.RxCompoundButton;
-import com.jakewharton.rxbinding.widget.RxTextView;
 
 import maxst.com.rxandroidstudy.R;
 import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
-import rx.functions.Func1;
-import rx.functions.Func2;
 
 public class MapVsFlatMapFragment extends Fragment {
 

@@ -22,13 +22,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import maxst.com.rxandroidstudy.R;
-import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
 
 public class AsyncBGWorkFragment extends Fragment {
 
@@ -94,13 +87,13 @@ public class AsyncBGWorkFragment extends Fragment {
 				addLog("Within runnable");
 				String result = doSomeLongOperationThatBlocksCurrentThread();
 
-				getActivity().runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						addLog(result);
-						progressBar.setVisibility(View.INVISIBLE);
-					}
-				});
+//				getActivity().runOnUiThread(new Runnable() {
+//					@Override
+//					public void run() {
+//						addLog(result);
+//						progressBar.setVisibility(View.INVISIBLE);
+//					}
+//				});
 			}
 		});
 	}
@@ -138,15 +131,18 @@ public class AsyncBGWorkFragment extends Fragment {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			Log.d(TAG, "Operation was interrupted");
+			workerCallback.onError(e);
 
-			getActivity().runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					addLog("Error occurred!!");
-					progressBar.setVisibility(View.INVISIBLE);
-				}
-			});
+//			getActivity().runOnUiThread(new Runnable() {
+//				@Override
+//				public void run() {
+//					addLog("Error occurred!!");
+//					progressBar.setVisibility(View.INVISIBLE);
+//				}
+//			});
 		}
+
+		workerCallback.onComplete("BG work completed");
 
 		return "BG work completed";
 	}
@@ -158,4 +154,35 @@ public class AsyncBGWorkFragment extends Fragment {
 			super(context, R.layout.item_log, R.id.item_log, logs);
 		}
 	}
+
+	private interface WorkerCallback {
+		void onError(Exception e);
+
+		void onComplete(String result);
+	}
+
+	private WorkerCallback workerCallback = new WorkerCallback() {
+
+		@Override
+		public void onError(Exception e) {
+			getActivity().runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					addLog(e.getMessage());
+					progressBar.setVisibility(View.INVISIBLE);
+				}
+			});
+		}
+
+		@Override
+		public void onComplete(String result) {
+			getActivity().runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					addLog(result);
+					progressBar.setVisibility(View.INVISIBLE);
+				}
+			});
+		}
+	};
 }

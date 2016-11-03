@@ -1,9 +1,7 @@
 package maxst.com.rxandroidstudy.fragment;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +10,7 @@ import android.widget.TextView;
 import com.jakewharton.rxbinding.view.RxView;
 
 import maxst.com.rxandroidstudy.R;
-import rx.Observable;
-import rx.Subscriber;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.subscriptions.CompositeSubscription;
 
 public class ViewClickFragment extends Fragment {
