@@ -76,6 +76,13 @@
 			android:textSize="15sp"/>
 
 		<Button
+			android:id="@+id/async_bg_work"
+			android:layout_width="250dp"
+			android:layout_height="wrap_content"
+			android:text="Async BG Work"
+			android:textSize="15sp"/>
+
+		<Button
 			android:id="@+id/scheduler_bg_work"
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
