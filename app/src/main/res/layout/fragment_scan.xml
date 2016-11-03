@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@+id/activity_rx_merge"
@@ -9,35 +9,34 @@
 	android:paddingLeft="@dimen/activity_horizontal_margin"
 	android:paddingRight="@dimen/activity_horizontal_margin"
 	android:paddingTop="@dimen/activity_vertical_margin"
-	tools:context="maxst.com.rxandroidstudy.RxMergeActivity">
+	android:orientation="vertical"
+	tools:context="maxst.com.rxandroidstudy.fragment.ViewClickFragment">
 
 	<Button
-		android:id="@+id/leftButton"
+		android:id="@+id/minusBtn"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Left Button"/>
+		android:text="Minus"/>
+
 
 	<Button
-		android:id="@+id/rightButton"
+		android:id="@+id/plusBtn"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_toRightOf="@id/leftButton"
-		android:layout_marginLeft="30dp"
-		android:text="Right Button"/>
+		android:layout_marginTop="20dp"
+		android:text="Plus"/>
 
 	<TextView
-		android:id="@+id/textView"
+		android:id="@+id/countText"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_below="@id/leftButton"
-		android:layout_marginTop="30dp"
-		android:text="No Text"/>
+		android:layout_marginTop="20dp"
+		android:text="No text"/>
 
-	<Button
-		android:id="@+id/goto_rx_scan"
+	<TextView
+		android:id="@+id/numberText"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_below="@id/textView"
-		android:text="Go to RxScan"/>
-
-</RelativeLayout>
+		android:layout_marginTop="20dp"
+		android:text="No text"/>
+</LinearLayout>

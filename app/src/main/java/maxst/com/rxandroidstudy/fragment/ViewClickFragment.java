@@ -1,6 +1,7 @@
 package maxst.com.rxandroidstudy.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,10 +16,12 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.subscriptions.CompositeSubscription;
 
 public class ViewClickFragment extends Fragment {
 
 	private static final String TAG = ViewClickFragment.class.getSimpleName();
+	private CompositeSubscription compositeSubscription;
 
 	public ViewClickFragment() {
 		// Required empty public constructor
@@ -34,7 +37,7 @@ public class ViewClickFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		// Inflate the layout for this fragment
+		compositeSubscription = new CompositeSubscription();
 		return inflater.inflate(R.layout.fragment_view_click, container, false);
 	}
 
@@ -42,22 +45,29 @@ public class ViewClickFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 
-		RxView.clicks(getView().findViewById(R.id.leftButton))
+		compositeSubscription.add(RxView.clicks(getView().findViewById(R.id.leftButton))
 				.map(event -> "left")
 				.subscribe(new Action1<String>() {
 					@Override
 					public void call(String s) {
 						((TextView) getView().findViewById(R.id.textView)).setText(s);
 					}
-				});
+				}));
 
-		RxView.clicks(getView().findViewById(R.id.rightButton))
+		compositeSubscription.add(RxView.clicks(getView().findViewById(R.id.rightButton))
 				.map(event -> "right")
 				.subscribe(new Action1<String>() {
 					@Override
 					public void call(String s) {
 						((TextView) getView().findViewById(R.id.textView)).setText(s);
 					}
-				});
+				}));
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+
+		compositeSubscription.unsubscribe();
 	}
 }
