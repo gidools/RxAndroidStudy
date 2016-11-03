@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
 
@@ -17,6 +16,7 @@ import butterknife.ButterKnife;
 import maxst.com.rxandroidstudy.R;
 import rx.Observable;
 import rx.Subscription;
+
 import static android.text.TextUtils.isEmpty;
 import static android.util.Patterns.EMAIL_ADDRESS;
 
