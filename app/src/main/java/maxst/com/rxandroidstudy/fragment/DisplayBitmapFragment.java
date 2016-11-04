@@ -1,6 +1,12 @@
 package maxst.com.rxandroidstudy.fragment;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
@@ -11,22 +17,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 
@@ -35,18 +42,15 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import maxst.com.rxandroidstudy.R;
 import rx.Observable;
-import rx.Observer;
-import rx.Scheduler;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
-public class FlatMapFragment extends Fragment {
+public class DisplayBitmapFragment extends Fragment {
 
-	private static final String TAG = FlatMapFragment.class.getSimpleName();
+	private static final String TAG = DisplayBitmapFragment.class.getSimpleName();
 	private CompositeSubscription compositeSubscription;
 
 	@Bind(R.id.list_exhibition)
@@ -58,12 +62,12 @@ public class FlatMapFragment extends Fragment {
 	private ExhibitionAdapter exhibitionAdapter;
 	private List<Exhibition> exbiExhibitionList;
 
-	public FlatMapFragment() {
+	public DisplayBitmapFragment() {
 		// Required empty public constructor
 	}
 
-	public static FlatMapFragment newInstance(String param1, String param2) {
-		FlatMapFragment fragment = new FlatMapFragment();
+	public static DisplayBitmapFragment newInstance(String param1, String param2) {
+		DisplayBitmapFragment fragment = new DisplayBitmapFragment();
 		Bundle args = new Bundle();
 		fragment.setArguments(args);
 		return fragment;
@@ -73,7 +77,7 @@ public class FlatMapFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-		View layout = inflater.inflate(R.layout.fragment_flat_map, container, false);
+		View layout = inflater.inflate(R.layout.fragment_display_bitmap, container, false);
 		ButterKnife.bind(this, layout);
 
 		exhibitionAdapter = new ExhibitionAdapter(getContext(), R.layout.item_exhibition, new ArrayList<>());
@@ -90,7 +94,8 @@ public class FlatMapFragment extends Fragment {
 				requestExhibitionObservable("http://api.arcube.co.kr/api/exhibitions?ordertype=popular")
 //				requestExhibitionObservable("http://api.arcube.co.k/api/exhibitions?ordertype=popular") // Make error intentionally
 						.flatMap(response -> {
-							Type collectionType = new TypeToken<List<Exhibition>>() { }.getType();
+							Type collectionType = new TypeToken<List<Exhibition>>() {
+							}.getType();
 							Gson gson = new GsonBuilder().create();
 							List<Exhibition> exhibitions = gson.fromJson(response, collectionType);
 							Log.d(TAG, "Current thread is main thread : " + (Looper.myLooper() == Looper.getMainLooper()));
@@ -146,34 +151,97 @@ public class FlatMapFragment extends Fragment {
 		ButterKnife.unbind(this);
 	}
 
-private static class Exhibition {
-	public int id;
-	public String name;
-	public String price;
-}
+	private static class Exhibition {
+		public int id;
+		public String name;
+		public String price;
 
-private static class ExhibitionAdapter extends ArrayAdapter<Exhibition> {
-
-	public ExhibitionAdapter(Context context, int resource, ArrayList<Exhibition> exhibitions) {
-		super(context, resource, exhibitions);
+		@SerializedName("mainimgurl")
+		public String mainImgUrl;
 	}
 
-	@NonNull
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		if (convertView == null) {
-			convertView = View.inflate(getContext(), R.layout.item_exhibition, null);
+	private static class ExhibitionAdapter extends ArrayAdapter<Exhibition> {
+
+		public ExhibitionAdapter(Context context, int resource, ArrayList<Exhibition> exhibitions) {
+			super(context, resource, exhibitions);
 		}
 
-		TextView id = (TextView) convertView.findViewById(R.id.item_id);
-		TextView name = (TextView) convertView.findViewById(R.id.item_name);
-		TextView price = (TextView) convertView.findViewById(R.id.item_price);
+		@NonNull
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			if (convertView == null) {
+				convertView = View.inflate(getContext(), R.layout.item_display_bitmap, null);
+			}
 
-		Exhibition exhibition = getItem(position);
-		id.setText(String.valueOf(exhibition.id));
-		name.setText(exhibition.name);
-		price.setText(exhibition.price);
-		return convertView;
+			TextView id = (TextView) convertView.findViewById(R.id.item_id);
+			TextView name = (TextView) convertView.findViewById(R.id.item_name);
+			TextView price = (TextView) convertView.findViewById(R.id.item_price);
+			ImageView image = (ImageView) convertView.findViewById(R.id.item_image);
+
+			Exhibition exhibition = getItem(position);
+			id.setText(String.valueOf(exhibition.id));
+			name.setText(exhibition.name);
+			price.setText(exhibition.price);
+			loadImage(image, exhibition.mainImgUrl);
+			return convertView;
+		}
+
+		private void loadImage(ImageView imageView, String url) {
+			unsubscribeAsync(imageView);
+
+			Subscription subscription = getBitmapObservableFromRemote(url)
+					.subscribeOn(Schedulers.io())
+					.observeOn(AndroidSchedulers.mainThread())
+					.subscribe(imageView::setImageBitmap);
+
+			imageView.setImageDrawable(new AsyncDrawable(getContext().getResources(), subscription));
+		}
+
+		private void unsubscribeAsync(ImageView imageView) {
+			final Drawable drawable = imageView.getDrawable();
+			if (drawable instanceof AsyncDrawable) {
+				final AsyncDrawable asyncDrawable = (AsyncDrawable) drawable;
+				asyncDrawable.unsubscribe();
+			}
+		}
+
+		private Observable<Bitmap> getBitmapObservableFromRemote(String url) {
+			return Observable.create(new Observable.OnSubscribe<Bitmap>() {
+
+				@Override
+				public void call(Subscriber<? super Bitmap> observer) {
+					try {
+						HttpURLConnection connection =
+								(HttpURLConnection) new URL(url).openConnection();
+
+						connection.setRequestMethod("GET");
+						connection.setUseCaches(false);
+						connection.setDoInput(true);
+						connection.setConnectTimeout(10 * 1000);
+						connection.setReadTimeout(10 * 1000);
+						InputStream responseStream = connection.getInputStream();
+						Bitmap myBitmap = BitmapFactory.decodeStream(responseStream);
+						observer.onNext(myBitmap);
+					} catch (IOException e) {
+						observer.onError(e);
+					} finally {
+						observer.onCompleted();
+					}
+				}
+			});
+		}
 	}
-}
+
+	private static class AsyncDrawable extends BitmapDrawable {
+		private final WeakReference<Subscription> subscribtionWeakReference;
+
+		public AsyncDrawable(Resources res, Subscription subscription) {
+			super(res);
+			this.subscribtionWeakReference = new WeakReference<>(subscription);
+		}
+
+		public void unsubscribe() {
+			subscribtionWeakReference.get().unsubscribe();
+		}
+	}
 }
