@@ -48,6 +48,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
+import static android.R.attr.bitmap;
+
 public class DisplayBitmapFragment extends Fragment {
 
 	private static final String TAG = DisplayBitmapFragment.class.getSimpleName();
@@ -60,7 +62,6 @@ public class DisplayBitmapFragment extends Fragment {
 	Button startBtn;
 
 	private ExhibitionAdapter exhibitionAdapter;
-	private List<Exhibition> exbiExhibitionList;
 
 	public DisplayBitmapFragment() {
 		// Required empty public constructor
@@ -192,16 +193,17 @@ public class DisplayBitmapFragment extends Fragment {
 			Subscription subscription = getBitmapObservableFromRemote(url)
 					.subscribeOn(Schedulers.io())
 					.observeOn(AndroidSchedulers.mainThread())
-					.subscribe(imageView::setImageBitmap);
+					.subscribe(imageView::setImageBitmap
+							, onError -> Log.d(TAG, "Error : " + onError.getMessage())
+							, () -> Log.d(TAG, "Completed"));
 
-			imageView.setImageDrawable(new AsyncDrawable(getContext().getResources(), subscription));
+			imageView.setTag(subscription);
 		}
 
 		private void unsubscribeAsync(ImageView imageView) {
-			final Drawable drawable = imageView.getDrawable();
-			if (drawable instanceof AsyncDrawable) {
-				final AsyncDrawable asyncDrawable = (AsyncDrawable) drawable;
-				asyncDrawable.unsubscribe();
+			final Object subscription = imageView.getTag();
+			if (subscription instanceof Subscription) {
+				((Subscription) subscription).unsubscribe();
 			}
 		}
 
@@ -229,19 +231,6 @@ public class DisplayBitmapFragment extends Fragment {
 					}
 				}
 			});
-		}
-	}
-
-	private static class AsyncDrawable extends BitmapDrawable {
-		private final WeakReference<Subscription> subscribtionWeakReference;
-
-		public AsyncDrawable(Resources res, Subscription subscription) {
-			super(res);
-			this.subscribtionWeakReference = new WeakReference<>(subscription);
-		}
-
-		public void unsubscribe() {
-			subscribtionWeakReference.get().unsubscribe();
 		}
 	}
 }
