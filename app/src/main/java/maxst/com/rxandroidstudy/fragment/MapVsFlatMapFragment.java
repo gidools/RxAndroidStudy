@@ -33,7 +33,6 @@ public class MapVsFlatMapFragment extends Fragment {
 		View layout = inflater.inflate(R.layout.fragment_map_vs_flat_map, container, false);
 
 		Observable.just("item1")
-//				.map(str -> str.toUpperCase())
 				.map(String::toUpperCase)
 				.subscribe(value -> {
 							Log.i(TAG, "onNext : " + value);

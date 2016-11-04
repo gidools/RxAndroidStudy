@@ -45,7 +45,7 @@ public class ObservableAndSubscriberFragment extends Fragment {
 					@Override
 					public void call(Subscriber<? super String> subscriber) {
 						subscriber.onNext("Hello RxAndroid !!");
-//						subscriber.onError(new Throwable("Error!!"));
+						subscriber.onError(new Throwable("Error!!"));
 						subscriber.onCompleted();
 					}
 				});

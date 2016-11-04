@@ -36,6 +36,7 @@ public class MainFragment extends Fragment {
 		layout.findViewById(R.id.rx_scan2).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.rx_combined_latest).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.rx_combined_latest).setOnClickListener(onClickListener);
+		layout.findViewById(R.id.flat_map).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.rx_map_vs_flat_map).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.async_bg_work).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.scheduler_bg_work).setOnClickListener(onClickListener);
@@ -86,6 +87,10 @@ public class MainFragment extends Fragment {
 
 				case R.id.rx_map_vs_flat_map:
 					clickedOn(new MapVsFlatMapFragment());
+					break;
+
+				case R.id.flat_map:
+					clickedOn(new FlatMapFragment());
 					break;
 
 				case R.id.async_bg_work:

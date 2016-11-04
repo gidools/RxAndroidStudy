@@ -40,7 +40,8 @@ public class ViewClickFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 
-		compositeSubscription.add(RxView.clicks(getView().findViewById(R.id.leftButton))
+		compositeSubscription.add(
+				RxView.clicks(getView().findViewById(R.id.leftButton))
 				.map(event -> "left")
 				.subscribe(new Action1<String>() {
 					@Override
@@ -49,7 +50,8 @@ public class ViewClickFragment extends Fragment {
 					}
 				}));
 
-		compositeSubscription.add(RxView.clicks(getView().findViewById(R.id.rightButton))
+		compositeSubscription.add(
+				RxView.clicks(getView().findViewById(R.id.rightButton))
 				.map(event -> "right")
 				.subscribe(new Action1<String>() {
 					@Override
