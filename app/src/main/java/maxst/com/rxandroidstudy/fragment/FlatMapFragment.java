@@ -2,6 +2,7 @@ package maxst.com.rxandroidstudy.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -88,42 +89,22 @@ public class FlatMapFragment extends Fragment {
 		compositeSubscription.add(
 				requestExhibitionObservable("http://api.arcube.co.kr/api/exhibitions?ordertype=popular")
 //				requestExhibitionObservable("http://api.arcube.co.k/api/exhibitions?ordertype=popular") // Make error intentionally
-				.flatMap(new Func1<String, Observable<Exhibition>>() {
-					@Override
-					public Observable<Exhibition> call(String response) {
-						Type collectionType = new TypeToken<List<Exhibition>>() {}.getType();
-						Gson gson = new GsonBuilder().create();
-						List<Exhibition> exhibitions = gson.fromJson(response, collectionType);
-						return Observable.from(exhibitions);
-					}
-				})
-				.subscribeOn(Schedulers.io())
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(new Subscriber<Exhibition>() {
-					@Override
-					public void onCompleted() {
-						Log.d(TAG, "onCompleted");
-						Toast.makeText(getContext(), "onCompleted", Toast.LENGTH_SHORT).show();
-					}
+						.flatMap(response -> {
+							Type collectionType = new TypeToken<List<Exhibition>>() {
+							}.getType();
+							Gson gson = new GsonBuilder().create();
+							List<Exhibition> exhibitions = gson.fromJson(response, collectionType);
 
-					@Override
-					public void onError(Throwable e) {
-						Log.d(TAG, "onError:" + e.getMessage());
-						Toast.makeText(getContext(), "Error : " + e.getMessage(), Toast.LENGTH_SHORT).show();
-					}
-
-					@Override
-					public void onNext(Exhibition exhibition) {
-						exhibitionAdapter.add(exhibition);
-						Log.d(TAG, "onNext:" + "Exhibition arrived");
-						Log.d(TAG, "id : " + exhibition.id + ", name : " + exhibition.name);
-					}
-				}));
-	}
-
-	private static String drainStream(InputStream in) {
-		Scanner s = new Scanner(in).useDelimiter("\\A");
-		return s.hasNext() ? s.next() : "";
+							Log.d(TAG, "Current thread is main thread : " + (Looper.myLooper() == Looper.getMainLooper()));
+							return Observable.from(exhibitions);
+						})
+						.subscribeOn(Schedulers.io())
+						.observeOn(AndroidSchedulers.mainThread())
+						.subscribe(exhibitionAdapter::add
+								, error -> Toast.makeText(getContext(), "Error : " + error.getMessage(), Toast.LENGTH_SHORT).show()
+								, () -> Toast.makeText(getContext(), "onCompleted", Toast.LENGTH_SHORT).show()
+						)
+		);
 	}
 
 	private Observable<String> requestExhibitionObservable(String url) {
@@ -154,6 +135,11 @@ public class FlatMapFragment extends Fragment {
 		});
 	}
 
+	private static String drainStream(InputStream in) {
+		Scanner s = new Scanner(in).useDelimiter("\\A");
+		return s.hasNext() ? s.next() : "";
+	}
+
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
@@ -162,35 +148,34 @@ public class FlatMapFragment extends Fragment {
 		ButterKnife.unbind(this);
 	}
 
-	private static class Exhibition {
+private static class Exhibition {
+	public int id;
+	public String name;
+	public String price;
+}
 
-		public int id;
-		public String name;
-		public String price;
+private static class ExhibitionAdapter extends ArrayAdapter<Exhibition> {
+
+	public ExhibitionAdapter(Context context, int resource, ArrayList<Exhibition> exhibitions) {
+		super(context, resource, exhibitions);
 	}
 
-	private static class ExhibitionAdapter extends ArrayAdapter<Exhibition> {
-
-		public ExhibitionAdapter(Context context, int resource, ArrayList<Exhibition> exhibitions) {
-			super(context, resource, exhibitions);
+	@NonNull
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		if (convertView == null) {
+			convertView = View.inflate(getContext(), R.layout.item_exhibition, null);
 		}
 
-		@NonNull
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			if (convertView == null) {
-				convertView = View.inflate(getContext(), R.layout.item_exhibition, null);
-			}
+		TextView id = (TextView) convertView.findViewById(R.id.item_id);
+		TextView name = (TextView) convertView.findViewById(R.id.item_name);
+		TextView price = (TextView) convertView.findViewById(R.id.item_price);
 
-			TextView id = (TextView)convertView.findViewById(R.id.item_id);
-			TextView name = (TextView)convertView.findViewById(R.id.item_name);
-			TextView price = (TextView)convertView.findViewById(R.id.item_price);
-
-			Exhibition exhibition = getItem(position);
-			id.setText(String.valueOf(exhibition.id));
-			name.setText(exhibition.name);
-			price.setText(exhibition.price);
-			return convertView;
-		}
+		Exhibition exhibition = getItem(position);
+		id.setText(String.valueOf(exhibition.id));
+		name.setText(exhibition.name);
+		price.setText(exhibition.price);
+		return convertView;
 	}
+}
 }
