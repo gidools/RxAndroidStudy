@@ -39,17 +39,17 @@ public class MapFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 
-		Observable<String> simpleObservable =
-				Observable.create(new Observable.OnSubscribe<String>() {
-					@Override
-					public void call(Subscriber<? super String> subscriber) {
-						subscriber.onNext("Hello RxAndroid !!");
-//						subscriber.onError(new Throwable("Error!!"));
-						subscriber.onCompleted();
-					}
-				});
+//		Observable<String> simpleObservable =
+//				Observable.create(new Observable.OnSubscribe<String>() {
+//					@Override
+//					public void call(Subscriber<? super String> subscriber) {
+//						subscriber.onNext("Hello RxAndroid !!");
+////						subscriber.onError(new Throwable("Error!!"));
+//						subscriber.onCompleted();
+//					}
+//				});
 
-//		Observable<String> simpleObservable = Observable.just("Hello RxAndroid");
+		Observable<String> simpleObservable = Observable.just("Hello RxAndroid");
 
 		setSubscriber(simpleObservable);
 	}
@@ -57,12 +57,14 @@ public class MapFragment extends Fragment {
 	private void setSubscriber(Observable<String> observable) {
 
 		observable
-				.map(new Func1<String, String>() {
-					@Override
-					public String call(String text) {
-						return text.toUpperCase();
-					}
-				})
+				//.map(input -> input.toUpperCase())
+				.map(String::toUpperCase)
+//				.map(new Func1<String, String>() {
+//					@Override
+//					public String call(String text) {
+//						return text.toUpperCase();
+//					}
+//				})
 				.subscribe(new Subscriber<String>() {
 					@Override
 					public void onCompleted() {

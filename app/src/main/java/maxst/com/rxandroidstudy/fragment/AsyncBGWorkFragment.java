@@ -87,13 +87,13 @@ public class AsyncBGWorkFragment extends Fragment {
 				addLog("Within runnable");
 				String result = doSomeLongOperationThatBlocksCurrentThread();
 
-//				getActivity().runOnUiThread(new Runnable() {
-//					@Override
-//					public void run() {
-//						addLog(result);
-//						progressBar.setVisibility(View.INVISIBLE);
-//					}
-//				});
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						addLog(result);
+						progressBar.setVisibility(View.INVISIBLE);
+					}
+				});
 			}
 		});
 	}
@@ -131,18 +131,18 @@ public class AsyncBGWorkFragment extends Fragment {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			Log.d(TAG, "Operation was interrupted");
-			workerCallback.onError(e);
+//			workerCallback.onError(e);
 
-//			getActivity().runOnUiThread(new Runnable() {
-//				@Override
-//				public void run() {
-//					addLog("Error occurred!!");
-//					progressBar.setVisibility(View.INVISIBLE);
-//				}
-//			});
+			getActivity().runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					addLog("Error occurred!!");
+					progressBar.setVisibility(View.INVISIBLE);
+				}
+			});
 		}
 
-		workerCallback.onComplete("BG work completed");
+//		workerCallback.onComplete("BG work completed");
 
 		return "BG work completed";
 	}
