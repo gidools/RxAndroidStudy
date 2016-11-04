@@ -130,5 +130,12 @@
 			android:layout_height="wrap_content"
 			android:text="Polling"
 			android:textSize="15sp"/>
+
+		<Button
+			android:id="@+id/display_bitmap"
+			android:layout_width="250dp"
+			android:layout_height="wrap_content"
+			android:text="Display bitmap"
+			android:textSize="15sp"/>
 	</LinearLayout>
 </ScrollView>

@@ -45,6 +45,7 @@ public class MainFragment extends Fragment {
 		layout.findViewById(R.id.buffer_demo).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.form_validation).setOnClickListener(onClickListener);
 		layout.findViewById(R.id.polling).setOnClickListener(onClickListener);
+		layout.findViewById(R.id.display_bitmap).setOnClickListener(onClickListener);
 		return layout;
 	}
 
@@ -119,6 +120,10 @@ public class MainFragment extends Fragment {
 
 				case R.id.polling:
 					clickedOn(new PollingFragment());
+					break;
+
+				case R.id.display_bitmap:
+					clickedOn(new DisplayBitmapFragment());
 					break;
 			}
 		}
