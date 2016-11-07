@@ -95,7 +95,8 @@ public class DisplayBitmapFragment extends Fragment {
 				requestExhibitionObservable("http://api.arcube.co.kr/api/exhibitions?ordertype=popular")
 //				requestExhibitionObservable("http://api.arcube.co.k/api/exhibitions?ordertype=popular") // Make error intentionally
 						.flatMap(response -> {
-							Type collectionType = new TypeToken<List<Exhibition>>() {}.getType();
+							Type collectionType = new TypeToken<List<Exhibition>>() {
+							}.getType();
 							Gson gson = new GsonBuilder().create();
 							List<Exhibition> exhibitions = gson.fromJson(response, collectionType);
 							Log.d(TAG, "Current thread is main thread : " + (Looper.myLooper() == Looper.getMainLooper()));
@@ -189,49 +190,63 @@ public class DisplayBitmapFragment extends Fragment {
 		}
 
 		private void loadImage(ImageView imageView, String url) {
-			unsubscribeAsync(imageView);
+			if (cancelPotentialWork(imageView, url)) {
+				Subscription subscription = getBitmapObservableFromRemote(url)
+						.subscribeOn(Schedulers.io())
+						.observeOn(AndroidSchedulers.mainThread())
+						.subscribe(imageView::setImageBitmap
+								, onError -> Log.d(TAG, "Error : " + onError.getMessage())
+								, () -> Log.d(TAG, "Completed"));
 
-			Subscription subscription = getBitmapObservableFromRemote(url)
-					.subscribeOn(Schedulers.io())
-					.observeOn(AndroidSchedulers.mainThread())
-					.subscribe(imageView::setImageBitmap
-							, onError -> Log.d(TAG, "Error : " + onError.getMessage())
-							, () -> Log.d(TAG, "Completed"));
-
-			imageView.setTag(subscription);
-		}
-
-		private void unsubscribeAsync(ImageView imageView) {
-			final Object subscription = imageView.getTag();
-			if (subscription instanceof Subscription) {
-				((Subscription) subscription).unsubscribe();
+				imageView.setTag(new SubscriberMap(subscription, url));
 			}
 		}
 
-		private Observable<Bitmap> getBitmapObservableFromRemote(String url) {
-			return Observable.create(new Observable.OnSubscribe<Bitmap>() {
-
-				@Override
-				public void call(Subscriber<? super Bitmap> observer) {
-					try {
-						HttpURLConnection connection =
-								(HttpURLConnection) new URL(url).openConnection();
-
-						connection.setRequestMethod("GET");
-						connection.setUseCaches(false);
-						connection.setDoInput(true);
-						connection.setConnectTimeout(10 * 1000);
-						connection.setReadTimeout(10 * 1000);
-						InputStream responseStream = connection.getInputStream();
-						Bitmap myBitmap = BitmapFactory.decodeStream(responseStream);
-						observer.onNext(myBitmap);
-					} catch (IOException e) {
-						observer.onError(e);
-					} finally {
-						observer.onCompleted();
-					}
+		private boolean cancelPotentialWork(ImageView imageView, String url) {
+			final Object subscriberMap = imageView.getTag();
+			if (subscriberMap instanceof SubscriberMap) {
+				if (url.equals(((SubscriberMap) subscriberMap).data) &&
+						!((SubscriberMap) subscriberMap).subscription.isUnsubscribed()) {
+					return false;
 				}
+
+				((SubscriberMap) subscriberMap).subscription.unsubscribe();
+			}
+
+			return true;
+		}
+
+		private Observable<Bitmap> getBitmapObservableFromRemote(String url) {
+			return Observable.create(observer -> {
+				try {
+					HttpURLConnection connection =
+							(HttpURLConnection) new URL(url).openConnection();
+
+					connection.setRequestMethod("GET");
+					connection.setUseCaches(false);
+					connection.setDoInput(true);
+					connection.setConnectTimeout(10 * 1000);
+					connection.setReadTimeout(10 * 1000);
+					InputStream responseStream = connection.getInputStream();
+					Bitmap myBitmap = BitmapFactory.decodeStream(responseStream);
+					observer.onNext(myBitmap);
+				} catch (Exception e) {
+					observer.onError(e);
+				} finally {
+					observer.onCompleted();
+				}
+
 			});
+		}
+	}
+
+	private static class SubscriberMap {
+		Subscription subscription;
+		String data;
+
+		public SubscriberMap(Subscription subscription, String data) {
+			this.subscription = subscription;
+			this.data = data;
 		}
 	}
 }
