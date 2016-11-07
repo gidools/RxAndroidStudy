@@ -95,8 +95,7 @@ public class DisplayBitmapFragment extends Fragment {
 				requestExhibitionObservable("http://api.arcube.co.kr/api/exhibitions?ordertype=popular")
 //				requestExhibitionObservable("http://api.arcube.co.k/api/exhibitions?ordertype=popular") // Make error intentionally
 						.flatMap(response -> {
-							Type collectionType = new TypeToken<List<Exhibition>>() {
-							}.getType();
+							Type collectionType = new TypeToken<List<Exhibition>>() {}.getType();
 							Gson gson = new GsonBuilder().create();
 							List<Exhibition> exhibitions = gson.fromJson(response, collectionType);
 							Log.d(TAG, "Current thread is main thread : " + (Looper.myLooper() == Looper.getMainLooper()));
@@ -183,7 +182,9 @@ public class DisplayBitmapFragment extends Fragment {
 			id.setText(String.valueOf(exhibition.id));
 			name.setText(exhibition.name);
 			price.setText(exhibition.price);
+
 			loadImage(image, exhibition.mainImgUrl);
+
 			return convertView;
 		}
 
