@@ -1,6 +1,8 @@
 package maxst.com.rxandroidstudy.fragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -16,7 +18,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +33,7 @@ import maxst.com.rxandroidstudy.R;
 import maxst.com.rxandroidstudy.util.AppInfo;
 import maxst.com.rxandroidstudy.util.AppInfoRich;
 import maxst.com.rxandroidstudy.util.ApplicationAdapter;
+import maxst.com.rxandroidstudy.util.ApplicationsList;
 import maxst.com.rxandroidstudy.util.Utils;
 import rx.Observable;
 import rx.Observer;
@@ -153,8 +160,20 @@ public class DisplayInstalledAppsFragment extends Fragment {
 						recyclerView.setVisibility(View.VISIBLE);
 						applicationAdapter.addApplications(appInfos);
 						swipeRefreshLayout.setRefreshing(false);
+						storeList(appInfos);
 					}
 				});
+	}
+
+	private void storeList(List<AppInfo> appInfos) {
+		ApplicationsList.getInstance().setList(appInfos);
+
+		Schedulers.io().createWorker().schedule(() -> {
+			SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+			Type appInfoType = new TypeToken<List<AppInfo>>() {
+			}.getType();
+			sharedPref.edit().putString("APPS", new Gson().toJson(appInfos, appInfoType)).apply();
+		});
 	}
 
 }
