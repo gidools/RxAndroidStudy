@@ -141,6 +141,11 @@ public class MainFragment extends Fragment {
 		clickedOn(new DisplayInstalledAppsRepeatFragment());
 	}
 
+	@OnClick(R.id.display_installed_apps_scan)
+	public void displayInstalledAppsScan() {
+		clickedOn(new DisplayInstalledAppsScanFragment());
+	}
+
 	private void clickedOn(@NonNull Fragment fragment) {
 		final String tag = fragment.getClass().toString();
 		getActivity().getSupportFragmentManager()
