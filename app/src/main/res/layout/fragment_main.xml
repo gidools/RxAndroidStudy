@@ -30,7 +30,7 @@
 			android:id="@+id/rx_map"
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
-			android:text="Filter map"
+			android:text="Map"
 			android:textSize="15sp"/>
 
 		<Button
@@ -55,13 +55,6 @@
 			android:textSize="15sp"/>
 
 		<Button
-			android:id="@+id/rx_scan2"
-			android:layout_width="250dp"
-			android:layout_height="wrap_content"
-			android:text="Scan 2"
-			android:textSize="15sp"/>
-
-		<Button
 			android:id="@+id/rx_combined_latest"
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
@@ -69,17 +62,17 @@
 			android:textSize="15sp"/>
 
 		<Button
-			android:id="@+id/flat_map"
+			android:id="@+id/rx_flat_map"
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
 			android:text="FlatMap"
 			android:textSize="15sp"/>
 
 		<Button
-			android:id="@+id/rx_map_vs_flat_map"
+			android:id="@+id/flat_map_http"
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
-			android:text="Map vs FlatMap"
+			android:text="FlatMapHttp"
 			android:textSize="15sp"/>
 
 		<Button
