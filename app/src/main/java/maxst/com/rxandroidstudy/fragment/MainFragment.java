@@ -126,6 +126,11 @@ public class MainFragment extends Fragment {
 		clickedOn(new DisplayBitmapFragment());
 	}
 
+	@OnClick(R.id.display_installed_apps)
+	public void displayInstalledApps() {
+		clickedOn(new DisplayInstalledAppsFragment());
+	}
+
 	private void clickedOn(@NonNull Fragment fragment) {
 		final String tag = fragment.getClass().toString();
 		getActivity().getSupportFragmentManager()
