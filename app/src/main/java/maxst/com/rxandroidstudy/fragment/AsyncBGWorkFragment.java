@@ -67,8 +67,8 @@ public class AsyncBGWorkFragment extends Fragment {
 	}
 
 	@Override
-	public void onDestroy() {
-		super.onDestroy();
+	public void onDestroyView() {
+		super.onDestroyView();
 		ButterKnife.unbind(this);
 		handler.removeCallbacksAndMessages(null);
 		handler = null;
