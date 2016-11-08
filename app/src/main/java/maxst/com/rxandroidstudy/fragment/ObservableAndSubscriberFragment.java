@@ -6,8 +6,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import maxst.com.rxandroidstudy.R;
 import rx.Observable;
 import rx.Subscriber;
@@ -17,6 +21,8 @@ import rx.functions.Action1;
 public class ObservableAndSubscriberFragment extends Fragment {
 
 	private static final String TAG = ObservableAndSubscriberFragment.class.getSimpleName();
+
+	private Observable<String> delayedObservable;
 
 	public ObservableAndSubscriberFragment() {
 		// Required empty public constructor
@@ -33,7 +39,15 @@ public class ObservableAndSubscriberFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-		return inflater.inflate(R.layout.fragment_observable_and_subscriber, container, false);
+		View layout = inflater.inflate(R.layout.fragment_observable_and_subscriber, container, false);
+		ButterKnife.bind(this, layout);
+		return layout;
+	}
+
+	@Override
+	public void onDestroyView() {
+		super.onDestroyView();
+		ButterKnife.unbind(this);
 	}
 
 	@Override
@@ -61,6 +75,13 @@ public class ObservableAndSubscriberFragment extends Fragment {
 
 		setSubscriber1(simpleObservable);
 		setSubscriber2(simpleObservable);
+
+		delayedObservable = Observable.create(onSubscribe -> {
+			Log.i(TAG, "DelayedObservable is created");
+			onSubscribe.onNext("Hello RxAndroid!");
+			//subscriber.onError(new Throwable("Error!"));
+			onSubscribe.onCompleted();
+		});
 	}
 
 	private void setSubscriber1(Observable<String> observable) {
@@ -102,5 +123,10 @@ public class ObservableAndSubscriberFragment extends Fragment {
 								Log.e(TAG, "Completed");
 							}
 						});
+	}
+
+	@OnClick(R.id.subscribe_btn)
+	public void startSubscription() {
+		delayedObservable.subscribe(newString -> ((TextView) getView().findViewById(R.id.textView3)).setText(newString));
 	}
 }
