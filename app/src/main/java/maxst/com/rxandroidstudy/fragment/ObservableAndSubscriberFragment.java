@@ -41,14 +41,21 @@ public class ObservableAndSubscriberFragment extends Fragment {
 		super.onResume();
 
 		Observable<String> simpleObservable =
-				Observable.create(new Observable.OnSubscribe<String>() {
-					@Override
-					public void call(Subscriber<? super String> subscriber) {
-						subscriber.onNext("Hello RxAndroid !!");
-						subscriber.onError(new Throwable("Error!!"));
-						subscriber.onCompleted();
-					}
+				Observable.create(subscriber -> {
+					subscriber.onNext("Hello RxAndroid!");
+					subscriber.onCompleted();
+					subscriber.onError(new Throwable("Error!"));
 				});
+
+//		Observable<String> simpleObservable =
+//				Observable.create(new Observable.OnSubscribe<String>() {
+//					@Override
+//					public void call(Subscriber<? super String> subscriber) {
+//						subscriber.onNext("Hello RxAndroid !!");
+//						subscriber.onError(new Throwable("Error!!"));
+//						subscriber.onCompleted();
+//					}
+//				});
 
 //		Observable<String> simpleObservable = Observable.just("Hello RxAndroid");
 
