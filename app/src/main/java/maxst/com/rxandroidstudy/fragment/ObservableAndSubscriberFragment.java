@@ -76,11 +76,11 @@ public class ObservableAndSubscriberFragment extends Fragment {
 		setSubscriber1(simpleObservable);
 		setSubscriber2(simpleObservable);
 
-		delayedObservable = Observable.create(onSubscribe -> {
+		delayedObservable = Observable.create(subscriber -> {
 			Log.i(TAG, "DelayedObservable is created");
-			onSubscribe.onNext("Hello RxAndroid!");
+			subscriber.onNext("Hello RxAndroid!");
 			//subscriber.onError(new Throwable("Error!"));
-			onSubscribe.onCompleted();
+			subscriber.onCompleted();
 		});
 	}
 

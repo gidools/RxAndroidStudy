@@ -29,6 +29,7 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
@@ -116,6 +117,10 @@ public class DisplayBitmapFragment extends Fragment {
 
 			@Override
 			public void call(Subscriber<? super String> observer) {
+				if (observer.isUnsubscribed()) {
+					return;
+				}
+
 				try {
 					HttpURLConnection connection =
 							(HttpURLConnection) new URL(url).openConnection();
@@ -205,8 +210,9 @@ public class DisplayBitmapFragment extends Fragment {
 		private boolean cancelPotentialWork(ImageView imageView, String url) {
 			final Object subscriberMap = imageView.getTag();
 			if (subscriberMap instanceof SubscriberMap) {
-				if (url.equals(((SubscriberMap) subscriberMap).data) &&
-						!((SubscriberMap) subscriberMap).subscription.isUnsubscribed()) {
+				if (url.equals(((SubscriberMap) subscriberMap).data)
+//						&& !((SubscriberMap) subscriberMap).subscription.isUnsubscribed()
+						) {
 					return false;
 				}
 
@@ -218,6 +224,9 @@ public class DisplayBitmapFragment extends Fragment {
 
 		private Observable<Bitmap> getBitmapObservableFromRemote(String url) {
 			return Observable.create(observer -> {
+				if (observer.isUnsubscribed()) {
+					return;
+				}
 				try {
 					HttpURLConnection connection =
 							(HttpURLConnection) new URL(url).openConnection();
