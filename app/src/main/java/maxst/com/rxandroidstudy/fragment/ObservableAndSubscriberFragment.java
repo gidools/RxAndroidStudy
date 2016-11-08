@@ -43,8 +43,8 @@ public class ObservableAndSubscriberFragment extends Fragment {
 		Observable<String> simpleObservable =
 				Observable.create(subscriber -> {
 					subscriber.onNext("Hello RxAndroid!");
+					//subscriber.onError(new Throwable("Error!"));
 					subscriber.onCompleted();
-					subscriber.onError(new Throwable("Error!"));
 				});
 
 //		Observable<String> simpleObservable =
