@@ -87,6 +87,7 @@ public class AsyncBGWorkFragment extends Fragment {
 				addLog("Within runnable");
 				String result = doSomeLongOperationThatBlocksCurrentThread();
 
+				// TODO : Null pointer exception when close fragment before thread completion
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
