@@ -90,10 +90,10 @@
 			android:textSize="15sp"/>
 
 		<Button
-			android:id="@+id/scheduler_bg_work"
+			android:id="@+id/bg_work_rx_scheduler"
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
-			android:text="Scheduler BG Work"
+			android:text="BG Work (Rx Scheduler)"
 			android:textSize="15sp"/>
 
 		<Button

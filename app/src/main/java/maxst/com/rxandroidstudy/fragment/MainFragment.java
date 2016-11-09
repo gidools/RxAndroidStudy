@@ -96,9 +96,9 @@ public class MainFragment extends Fragment {
 		clickedOn(new BGWorkAsyncTaskFragment());
 	}
 
-	@OnClick(R.id.scheduler_bg_work)
+	@OnClick(R.id.bg_work_rx_scheduler)
 	public void scheduler() {
-		clickedOn(new SchedulerBGWorkFragment());
+		clickedOn(new BGWorkRxSchedulerFragment());
 	}
 
 	@OnClick(R.id.debounce_emitter)
