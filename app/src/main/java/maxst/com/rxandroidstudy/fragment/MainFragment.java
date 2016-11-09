@@ -151,6 +151,11 @@ public class MainFragment extends Fragment {
 		clickedOn(new DisplayInstalledAppsGroupByFragment());
 	}
 
+	@OnClick(R.id.network_download)
+	public void networkDownload() {
+		clickedOn(new NetworkDownloadFragment());
+	}
+
 	private void clickedOn(@NonNull Fragment fragment) {
 		final String tag = fragment.getClass().toString();
 		getActivity().getSupportFragmentManager()
