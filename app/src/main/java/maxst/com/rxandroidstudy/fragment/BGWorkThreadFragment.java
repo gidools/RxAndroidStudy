@@ -74,33 +74,25 @@ public class BGWorkThreadFragment extends Fragment {
 		logAdapter.clear();
 		addLog("Button Clicked");
 
-		handler.post(new Runnable() {
-			@Override
-			public void run() {
+		handler.post(() -> {
 				addLog("performing long operation");
 
 				try {
 					Thread.sleep(3000);
 				} catch (InterruptedException e) {
-					getActivity().runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
+					getActivity().runOnUiThread(() -> {
 							addLog("Error occurred!!");
 							progressBar.setVisibility(View.INVISIBLE);
-						}
-					});
+						});
 				}
 
 				// TODO : Null pointer exception when close fragment before thread completion
-				getActivity().runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
+				getActivity().runOnUiThread(() -> {
 						addLog("Thread completed");
 						progressBar.setVisibility(View.INVISIBLE);
-					}
-				});
+					});
 			}
-		});
+		);
 	}
 
 	private void addLog(String logMsg) {

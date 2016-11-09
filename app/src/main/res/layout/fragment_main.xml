@@ -65,14 +65,7 @@
 			android:id="@+id/rx_flat_map"
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
-			android:text="FlatMap"
-			android:textSize="15sp"/>
-
-		<Button
-			android:id="@+id/flat_map_http"
-			android:layout_width="250dp"
-			android:layout_height="wrap_content"
-			android:text="FlatMapHttp"
+			android:text="Flat Map"
 			android:textSize="15sp"/>
 
 		<Button
@@ -94,6 +87,13 @@
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
 			android:text="BG Work (Rx Scheduler)"
+			android:textSize="15sp"/>
+
+		<Button
+			android:id="@+id/flat_map_http"
+			android:layout_width="250dp"
+			android:layout_height="wrap_content"
+			android:text="Flat Map Http"
 			android:textSize="15sp"/>
 
 		<Button

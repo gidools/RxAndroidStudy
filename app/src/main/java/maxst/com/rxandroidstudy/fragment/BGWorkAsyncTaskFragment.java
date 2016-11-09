@@ -54,13 +54,10 @@ public class BGWorkAsyncTaskFragment extends Fragment {
 				try {
 					Thread.sleep(3000);
 				} catch (InterruptedException e) {
-					getActivity().runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							addLog("Error occurred!!");
-							progressBar.setVisibility(View.INVISIBLE);
-						}
-					});
+					getActivity().runOnUiThread(() -> {
+								addLog("Error occurred!!");
+								progressBar.setVisibility(View.INVISIBLE);
+							});
 				}
 
 				return null;
