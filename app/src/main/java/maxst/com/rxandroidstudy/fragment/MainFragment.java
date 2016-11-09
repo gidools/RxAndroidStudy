@@ -81,9 +81,14 @@ public class MainFragment extends Fragment {
 		clickedOn(new FlatMapFragment());
 	}
 
-	@OnClick(R.id.flat_map_http)
+	@OnClick(R.id.async_http)
 	public void flatMap() {
-		clickedOn(new FlatMapHttpFragment());
+		clickedOn(new AsyncHttpFragment());
+	}
+
+	@OnClick(R.id.synchronous_http)
+	public void synchronousHttp() {
+		clickedOn(new SynchronousHttpFragment());
 	}
 
 	@OnClick(R.id.bg_work_thread)

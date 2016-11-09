@@ -38,9 +38,9 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
-public class FlatMapHttpFragment extends Fragment {
+public class SynchronousHttpFragment extends Fragment {
 
-	private static final String TAG = FlatMapHttpFragment.class.getSimpleName();
+	private static final String TAG = SynchronousHttpFragment.class.getSimpleName();
 	private CompositeSubscription compositeSubscription;
 
 	@Bind(R.id.list_exhibition)
@@ -50,9 +50,8 @@ public class FlatMapHttpFragment extends Fragment {
 	Button startBtn;
 
 	private ExhibitionAdapter exhibitionAdapter;
-	private List<Exhibition> exbiExhibitionList;
 
-	public FlatMapHttpFragment() {
+	public SynchronousHttpFragment() {
 		// Required empty public constructor
 	}
 
@@ -60,7 +59,7 @@ public class FlatMapHttpFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-		View layout = inflater.inflate(R.layout.fragment_flat_map_http, container, false);
+		View layout = inflater.inflate(R.layout.fragment_async_http, container, false);
 		ButterKnife.bind(this, layout);
 
 		exhibitionAdapter = new ExhibitionAdapter(getContext(), R.layout.item_exhibition, new ArrayList<>());
@@ -69,25 +68,20 @@ public class FlatMapHttpFragment extends Fragment {
 		return layout;
 	}
 
-	/**
-	 * Json parsing is recommended another thread from UI thread
-	 */
 	@OnClick(R.id.btn_start_operation)
 	public void startOperation() {
 		exhibitionAdapter.clear();
 
 		compositeSubscription.add(
 				requestExhibitionObservable("http://api.arcube.co.kr/api/exhibitions?ordertype=popular")
-//				requestExhibitionObservable("http://api.arcube.co.k/api/exhibitions?ordertype=popular") // Make error intentionally
 						.flatMap(response -> {
-							Type collectionType = new TypeToken<List<Exhibition>>() { }.getType();
+							Type collectionType = new TypeToken<List<Exhibition>>() {
+							}.getType();
 							Gson gson = new GsonBuilder().create();
 							List<Exhibition> exhibitions = gson.fromJson(response, collectionType);
 							Log.d(TAG, "Current thread is main thread : " + (Looper.myLooper() == Looper.getMainLooper()));
 							return Observable.from(exhibitions);
 						})
-						.subscribeOn(Schedulers.io())
-						.observeOn(AndroidSchedulers.mainThread())
 						.subscribe(exhibition -> exhibitionAdapter.add(exhibition)
 								, error -> Toast.makeText(getContext(), "Error : " + error.getMessage(), Toast.LENGTH_SHORT).show()
 								, () -> Toast.makeText(getContext(), "onCompleted", Toast.LENGTH_SHORT).show()
@@ -101,14 +95,8 @@ public class FlatMapHttpFragment extends Fragment {
 			@Override
 			public void call(Subscriber<? super String> observer) {
 				try {
-					HttpURLConnection connection =
-							(HttpURLConnection) new URL(url).openConnection();
-
+					HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
 					connection.setRequestMethod("GET");
-					connection.setUseCaches(false);
-					connection.setDoInput(true);
-					connection.setConnectTimeout(10 * 1000);
-					connection.setReadTimeout(10 * 1000);
 					InputStream responseStream = connection.getInputStream();
 					String response = drainStream(responseStream);
 					responseStream.close();
@@ -136,34 +124,34 @@ public class FlatMapHttpFragment extends Fragment {
 		ButterKnife.unbind(this);
 	}
 
-private static class Exhibition {
-	public int id;
-	public String name;
-	public String price;
-}
-
-private static class ExhibitionAdapter extends ArrayAdapter<Exhibition> {
-
-	public ExhibitionAdapter(Context context, int resource, ArrayList<Exhibition> exhibitions) {
-		super(context, resource, exhibitions);
+	private static class Exhibition {
+		public int id;
+		public String name;
+		public String price;
 	}
 
-	@NonNull
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		if (convertView == null) {
-			convertView = View.inflate(getContext(), R.layout.item_exhibition, null);
+	private static class ExhibitionAdapter extends ArrayAdapter<Exhibition> {
+
+		public ExhibitionAdapter(Context context, int resource, ArrayList<Exhibition> exhibitions) {
+			super(context, resource, exhibitions);
 		}
 
-		TextView id = (TextView) convertView.findViewById(R.id.item_id);
-		TextView name = (TextView) convertView.findViewById(R.id.item_name);
-		TextView price = (TextView) convertView.findViewById(R.id.item_price);
+		@NonNull
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			if (convertView == null) {
+				convertView = View.inflate(getContext(), R.layout.item_exhibition, null);
+			}
 
-		Exhibition exhibition = getItem(position);
-		id.setText(String.valueOf(exhibition.id));
-		name.setText(exhibition.name);
-		price.setText(exhibition.price);
-		return convertView;
+			TextView id = (TextView) convertView.findViewById(R.id.item_id);
+			TextView name = (TextView) convertView.findViewById(R.id.item_name);
+			TextView price = (TextView) convertView.findViewById(R.id.item_price);
+
+			Exhibition exhibition = getItem(position);
+			id.setText(String.valueOf(exhibition.id));
+			name.setText(exhibition.name);
+			price.setText(exhibition.price);
+			return convertView;
+		}
 	}
-}
 }
