@@ -76,10 +76,17 @@
 			android:textSize="15sp"/>
 
 		<Button
-			android:id="@+id/async_bg_work"
+			android:id="@+id/bg_work_thread"
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
-			android:text="Async BG Work"
+			android:text="BG Work (Thread)"
+			android:textSize="15sp"/>
+
+		<Button
+			android:id="@+id/bg_work_async_task"
+			android:layout_width="250dp"
+			android:layout_height="wrap_content"
+			android:text="BG Work (AsyncTask)"
 			android:textSize="15sp"/>
 
 		<Button

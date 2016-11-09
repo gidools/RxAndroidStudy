@@ -1,6 +1,7 @@
 package maxst.com.rxandroidstudy.fragment;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -23,9 +24,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import maxst.com.rxandroidstudy.R;
 
-public class AsyncBGWorkFragment extends Fragment {
+public class BGWorkAsyncTaskFragment extends Fragment {
 
-	private static final String TAG = AsyncBGWorkFragment.class.getSimpleName();
+	private static final String TAG = BGWorkAsyncTaskFragment.class.getSimpleName();
 
 	@Bind(R.id.progress_operation_running)
 	ProgressBar progressBar;
@@ -35,17 +36,10 @@ public class AsyncBGWorkFragment extends Fragment {
 
 	private LogAdapter logAdapter;
 	private List<String> logList;
-	private Handler handler;
+	private AsyncTask<Void, Void, Void> asyncTask;
 
-	public AsyncBGWorkFragment() {
+	public BGWorkAsyncTaskFragment() {
 		// Required empty public constructor
-	}
-
-	public static AsyncBGWorkFragment newInstance(String param1, String param2) {
-		AsyncBGWorkFragment fragment = new AsyncBGWorkFragment();
-		Bundle args = new Bundle();
-		fragment.setArguments(args);
-		return fragment;
 	}
 
 	@Override
@@ -53,15 +47,37 @@ public class AsyncBGWorkFragment extends Fragment {
 		super.onActivityCreated(savedInstanceState);
 		setupLogger();
 
-		HandlerThread handlerThread = new HandlerThread("BG Work");
-		handlerThread.start();
-		handler = new Handler(handlerThread.getLooper());
+		asyncTask = new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... voids) {
+				addLog("performing long operation");
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					getActivity().runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							addLog("Error occurred!!");
+							progressBar.setVisibility(View.INVISIBLE);
+						}
+					});
+				}
+
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(Void aVoid) {
+				addLog("Thread completed");
+				progressBar.setVisibility(View.INVISIBLE);
+			}
+		};
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		View layout = inflater.inflate(R.layout.fragment_async_bg_work, container, false);
+		View layout = inflater.inflate(R.layout.fragment_bg_work_async_task, container, false);
 		ButterKnife.bind(this, layout);
 		return layout;
 	}
@@ -70,8 +86,6 @@ public class AsyncBGWorkFragment extends Fragment {
 	public void onDestroyView() {
 		super.onDestroyView();
 		ButterKnife.unbind(this);
-		handler.removeCallbacksAndMessages(null);
-		handler = null;
 	}
 
 	@OnClick(R.id.btn_start_operation)
@@ -81,22 +95,7 @@ public class AsyncBGWorkFragment extends Fragment {
 		logAdapter.clear();
 		addLog("Button Clicked");
 
-		handler.post(new Runnable() {
-			@Override
-			public void run() {
-				addLog("Within runnable");
-				String result = doSomeLongOperationThatBlocksCurrentThread();
-
-				// TODO : Null pointer exception when close fragment before thread completion
-				getActivity().runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						addLog(result);
-						progressBar.setVisibility(View.INVISIBLE);
-					}
-				});
-			}
-		});
+		asyncTask.execute();
 	}
 
 	private void addLog(String logMsg) {
@@ -125,29 +124,6 @@ public class AsyncBGWorkFragment extends Fragment {
 		return Looper.myLooper() == Looper.getMainLooper();
 	}
 
-	private String doSomeLongOperationThatBlocksCurrentThread() {
-		addLog("performing long operation");
-
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			Log.d(TAG, "Operation was interrupted");
-//			workerCallback.onError(e);
-
-			getActivity().runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					addLog("Error occurred!!");
-					progressBar.setVisibility(View.INVISIBLE);
-				}
-			});
-		}
-
-//		workerCallback.onComplete("BG work completed");
-
-		return "BG work completed";
-	}
-
 	private class LogAdapter
 			extends ArrayAdapter<String> {
 
@@ -155,35 +131,4 @@ public class AsyncBGWorkFragment extends Fragment {
 			super(context, R.layout.item_log, R.id.item_log, logs);
 		}
 	}
-
-	private interface WorkerCallback {
-		void onError(Exception e);
-
-		void onComplete(String result);
-	}
-
-	private WorkerCallback workerCallback = new WorkerCallback() {
-
-		@Override
-		public void onError(Exception e) {
-			getActivity().runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					addLog(e.getMessage());
-					progressBar.setVisibility(View.INVISIBLE);
-				}
-			});
-		}
-
-		@Override
-		public void onComplete(String result) {
-			getActivity().runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					addLog(result);
-					progressBar.setVisibility(View.INVISIBLE);
-				}
-			});
-		}
-	};
 }

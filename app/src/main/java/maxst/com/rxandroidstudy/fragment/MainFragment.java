@@ -86,9 +86,14 @@ public class MainFragment extends Fragment {
 		clickedOn(new FlatMapHttpFragment());
 	}
 
-	@OnClick(R.id.async_bg_work)
-	public void asyncBgWork() {
-		clickedOn(new AsyncBGWorkFragment());
+	@OnClick(R.id.bg_work_thread)
+	public void bgWorkThread() {
+		clickedOn(new BGWorkThreadFragment());
+	}
+
+	@OnClick(R.id.bg_work_async_task)
+	public void bgWorkAsyncTask() {
+		clickedOn(new BGWorkAsyncTaskFragment());
 	}
 
 	@OnClick(R.id.scheduler_bg_work)
