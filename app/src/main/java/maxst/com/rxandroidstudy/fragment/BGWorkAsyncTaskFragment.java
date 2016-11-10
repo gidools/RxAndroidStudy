@@ -183,7 +183,5 @@ public class BGWorkAsyncTaskFragment extends Fragment {
 			fragment.addLog("Thread completed");
 			view.setVisibility(View.INVISIBLE);
 		}
-	}
-
-	;
+	};
 }
