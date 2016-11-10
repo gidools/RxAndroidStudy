@@ -30,7 +30,7 @@
 			android:id="@+id/rx_map"
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
-			android:text="Filter map"
+			android:text="Map"
 			android:textSize="15sp"/>
 
 		<Button
@@ -55,13 +55,6 @@
 			android:textSize="15sp"/>
 
 		<Button
-			android:id="@+id/rx_scan2"
-			android:layout_width="250dp"
-			android:layout_height="wrap_content"
-			android:text="Scan 2"
-			android:textSize="15sp"/>
-
-		<Button
 			android:id="@+id/rx_combined_latest"
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
@@ -69,31 +62,52 @@
 			android:textSize="15sp"/>
 
 		<Button
-			android:id="@+id/flat_map"
+			android:id="@+id/rx_flat_map"
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
-			android:text="FlatMap"
+			android:text="Flat Map"
 			android:textSize="15sp"/>
 
 		<Button
-			android:id="@+id/rx_map_vs_flat_map"
+			android:id="@+id/bg_work_thread"
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
-			android:text="Map vs FlatMap"
+			android:text="BG Work (Thread)"
 			android:textSize="15sp"/>
 
 		<Button
-			android:id="@+id/async_bg_work"
+			android:id="@+id/bg_work_async_task"
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
-			android:text="Async BG Work"
+			android:text="BG Work (AsyncTask)"
 			android:textSize="15sp"/>
 
 		<Button
-			android:id="@+id/scheduler_bg_work"
+			android:id="@+id/bg_work_rx_scheduler"
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
-			android:text="Scheduler BG Work"
+			android:text="BG Work (Rx Scheduler)"
+			android:textSize="15sp"/>
+
+		<Button
+			android:id="@+id/synchronous_http"
+			android:layout_width="250dp"
+			android:layout_height="wrap_content"
+			android:text="Synchronous Http (Rx)"
+			android:textSize="15sp"/>
+
+		<Button
+			android:id="@+id/async_http"
+			android:layout_width="250dp"
+			android:layout_height="wrap_content"
+			android:text="Async Http (Scheduler)"
+			android:textSize="15sp"/>
+
+		<Button
+			android:id="@+id/network_download"
+			android:layout_width="250dp"
+			android:layout_height="wrap_content"
+			android:text="Network Download"
 			android:textSize="15sp"/>
 
 		<Button
@@ -136,6 +150,41 @@
 			android:layout_width="250dp"
 			android:layout_height="wrap_content"
 			android:text="Display bitmap"
+			android:textSize="15sp"/>
+
+		<Button
+			android:id="@+id/display_installed_apps"
+			android:layout_width="250dp"
+			android:layout_height="wrap_content"
+			android:text="Display installed apps"
+			android:textSize="15sp"/>
+
+		<Button
+			android:id="@+id/display_installed_apps2"
+			android:layout_width="250dp"
+			android:layout_height="wrap_content"
+			android:text="Display installed apps 2"
+			android:textSize="15sp"/>
+
+		<Button
+			android:id="@+id/display_installed_apps_repeat"
+			android:layout_width="250dp"
+			android:layout_height="wrap_content"
+			android:text="Display installed apps repeat"
+			android:textSize="15sp"/>
+
+		<Button
+			android:id="@+id/display_installed_apps_scan"
+			android:layout_width="250dp"
+			android:layout_height="wrap_content"
+			android:text="Display installed apps scan"
+			android:textSize="15sp"/>
+
+		<Button
+			android:id="@+id/display_installed_apps_group_by"
+			android:layout_width="250dp"
+			android:layout_height="wrap_content"
+			android:text="Display installed apps Group by"
 			android:textSize="15sp"/>
 	</LinearLayout>
 </ScrollView>

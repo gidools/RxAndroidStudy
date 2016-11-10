@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,16 +21,14 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import maxst.com.rxandroidstudy.R;
 import rx.Observable;
-import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
-public class SchedulerBGWorkFragment extends Fragment {
+public class BGWorkRxSchedulerFragment extends Fragment {
 
-	private static final String TAG = SchedulerBGWorkFragment.class.getSimpleName();
+	private static final String TAG = BGWorkRxSchedulerFragment.class.getSimpleName();
 
 	@Bind(R.id.progress_operation_running)
 	ProgressBar progressBar;
@@ -43,15 +40,8 @@ public class SchedulerBGWorkFragment extends Fragment {
 	private List<String> logList;
 	private CompositeSubscription compositeSubscription = new CompositeSubscription();
 
-	public SchedulerBGWorkFragment() {
+	public BGWorkRxSchedulerFragment() {
 		// Required empty public constructor
-	}
-
-	public static SchedulerBGWorkFragment newInstance(String param1, String param2) {
-		SchedulerBGWorkFragment fragment = new SchedulerBGWorkFragment();
-		Bundle args = new Bundle();
-		fragment.setArguments(args);
-		return fragment;
 	}
 
 	@Override
@@ -63,7 +53,7 @@ public class SchedulerBGWorkFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		View layout = inflater.inflate(R.layout.fragment_scheduler_bg_work, container, false);
+		View layout = inflater.inflate(R.layout.fragment_bg_work_rx_scheduler, container, false);
 		ButterKnife.bind(this, layout);
 		return layout;
 	}
@@ -82,23 +72,25 @@ public class SchedulerBGWorkFragment extends Fragment {
 		logAdapter.clear();
 		addLog("Button Clicked");
 
-		Subscription s = Observable.just(true)
-				.map(new Func1<Boolean, Boolean>() {
-					@Override
-					public Boolean call(Boolean aBoolean) {
-						addLog("Within Observable");
-						doSomeLongOperationThatBlocksCurrentThread();
-						return aBoolean;
+		Subscription s = Observable.create(
+				subscriber -> {
+					addLog("performing long operation");
+					subscriber.onNext("onNext");
+					try {
+						Thread.sleep(3000);
+					} catch (InterruptedException e) {
+						subscriber.onError(new Throwable("Error"));
 					}
+					subscriber.onCompleted();
 				})
 				.subscribeOn(Schedulers.io())
 				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(onNext -> addLog(String.format("onNext with return value \"%b\"", onNext)),
-						onError -> {
+				.subscribe(onNext -> {}
+						, onError -> {
 							addLog(String.format("Boo! Error %s", onError.getMessage()));
 							progressBar.setVisibility(View.INVISIBLE);
-						},
-						() -> {
+						}
+						, () -> {
 							addLog("On complete");
 							progressBar.setVisibility(View.INVISIBLE);
 						}); // Observer
@@ -128,59 +120,8 @@ public class SchedulerBGWorkFragment extends Fragment {
 		logListView.setAdapter(logAdapter);
 	}
 
-//	private Observable<Boolean> getObservable() {
-//		return Observable.just(true).map(aBoolean -> {
-//			addLog("Within Observable");
-//			doSomeLongOperationThatBlocksCurrentThread();
-//			return aBoolean;
-//		});
-//	}
-
-//	private Observable<Boolean> getObservable() {
-//		return Observable.just(true).map(new Func1<Boolean, Boolean>() {
-//			@Override
-//			public Boolean call(Boolean aBoolean) {
-//				addLog("Within Observable");
-//				doSomeLongOperationThatBlocksCurrentThread();
-//				return aBoolean;
-//			}
-//		});
-//	}
-
-	private Observer<Boolean> getObserver() {
-		return new Observer<Boolean>() {
-
-			@Override
-			public void onCompleted() {
-				addLog("On complete");
-				progressBar.setVisibility(View.INVISIBLE);
-			}
-
-			@Override
-			public void onError(Throwable e) {
-				addLog(String.format("Boo! Error %s", e.getMessage()));
-				progressBar.setVisibility(View.INVISIBLE);
-			}
-
-			@Override
-			public void onNext(Boolean bool) {
-				addLog(String.format("onNext with return value \"%b\"", bool));
-			}
-		};
-	}
-
 	private boolean isCurrentlyOnMainThread() {
 		return Looper.myLooper() == Looper.getMainLooper();
-	}
-
-	private void doSomeLongOperationThatBlocksCurrentThread() {
-		addLog("performing long operation");
-
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			Log.d(TAG, "Operation was interrupted");
-		}
 	}
 
 	private class LogAdapter

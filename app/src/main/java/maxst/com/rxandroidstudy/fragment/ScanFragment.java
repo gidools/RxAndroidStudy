@@ -47,14 +47,7 @@ public class ScanFragment extends Fragment {
 
 		Observable<Integer> together = Observable.merge(minus, plus);
 
-//		together.scan(0, new Func2<Integer, Integer, Integer>() {
-//			@Override
-//			public Integer call(Integer integer, Integer integer2) {
-//				return (integer + integer2);
-//			}
-//		}).subscribe(count -> ((TextView)getView().findViewById(R.id.countText)).setText(count.toString()));;
-//
-		together.scan(0, (sum, number) -> sum + 1)
+		together.scan(0, (sum, number) -> sum + number)
 				.subscribe(count -> ((TextView)getView().findViewById(R.id.countText)).setText(count.toString()));
 	}
 }

@@ -23,9 +23,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import maxst.com.rxandroidstudy.R;
 
-public class AsyncBGWorkFragment extends Fragment {
+public class BGWorkThreadFragment extends Fragment {
 
-	private static final String TAG = AsyncBGWorkFragment.class.getSimpleName();
+	private static final String TAG = BGWorkThreadFragment.class.getSimpleName();
 
 	@Bind(R.id.progress_operation_running)
 	ProgressBar progressBar;
@@ -37,15 +37,8 @@ public class AsyncBGWorkFragment extends Fragment {
 	private List<String> logList;
 	private Handler handler;
 
-	public AsyncBGWorkFragment() {
+	public BGWorkThreadFragment() {
 		// Required empty public constructor
-	}
-
-	public static AsyncBGWorkFragment newInstance(String param1, String param2) {
-		AsyncBGWorkFragment fragment = new AsyncBGWorkFragment();
-		Bundle args = new Bundle();
-		fragment.setArguments(args);
-		return fragment;
 	}
 
 	@Override
@@ -61,14 +54,14 @@ public class AsyncBGWorkFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
-		View layout = inflater.inflate(R.layout.fragment_async_bg_work, container, false);
+		View layout = inflater.inflate(R.layout.fragment_bg_work_thread, container, false);
 		ButterKnife.bind(this, layout);
 		return layout;
 	}
 
 	@Override
-	public void onDestroy() {
-		super.onDestroy();
+	public void onDestroyView() {
+		super.onDestroyView();
 		ButterKnife.unbind(this);
 		handler.removeCallbacksAndMessages(null);
 		handler = null;
@@ -81,21 +74,25 @@ public class AsyncBGWorkFragment extends Fragment {
 		logAdapter.clear();
 		addLog("Button Clicked");
 
-		handler.post(new Runnable() {
-			@Override
-			public void run() {
-				addLog("Within runnable");
-				String result = doSomeLongOperationThatBlocksCurrentThread();
+		handler.post(() -> {
+				addLog("performing long operation");
 
-				getActivity().runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						addLog(result);
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					getActivity().runOnUiThread(() -> {
+							addLog("Error occurred!!");
+							progressBar.setVisibility(View.INVISIBLE);
+						});
+				}
+
+				// TODO : Null pointer exception when close fragment before thread completion
+				getActivity().runOnUiThread(() -> {
+						addLog("Thread completed");
 						progressBar.setVisibility(View.INVISIBLE);
-					}
-				});
+					});
 			}
-		});
+		);
 	}
 
 	private void addLog(String logMsg) {
@@ -124,29 +121,6 @@ public class AsyncBGWorkFragment extends Fragment {
 		return Looper.myLooper() == Looper.getMainLooper();
 	}
 
-	private String doSomeLongOperationThatBlocksCurrentThread() {
-		addLog("performing long operation");
-
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			Log.d(TAG, "Operation was interrupted");
-//			workerCallback.onError(e);
-
-			getActivity().runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					addLog("Error occurred!!");
-					progressBar.setVisibility(View.INVISIBLE);
-				}
-			});
-		}
-
-//		workerCallback.onComplete("BG work completed");
-
-		return "BG work completed";
-	}
-
 	private class LogAdapter
 			extends ArrayAdapter<String> {
 
@@ -154,35 +128,4 @@ public class AsyncBGWorkFragment extends Fragment {
 			super(context, R.layout.item_log, R.id.item_log, logs);
 		}
 	}
-
-	private interface WorkerCallback {
-		void onError(Exception e);
-
-		void onComplete(String result);
-	}
-
-	private WorkerCallback workerCallback = new WorkerCallback() {
-
-		@Override
-		public void onError(Exception e) {
-			getActivity().runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					addLog(e.getMessage());
-					progressBar.setVisibility(View.INVISIBLE);
-				}
-			});
-		}
-
-		@Override
-		public void onComplete(String result) {
-			getActivity().runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					addLog(result);
-					progressBar.setVisibility(View.INVISIBLE);
-				}
-			});
-		}
-	};
 }
