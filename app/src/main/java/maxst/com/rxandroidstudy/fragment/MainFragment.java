@@ -2,6 +2,7 @@ package maxst.com.rxandroidstudy.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +29,13 @@ public class MainFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-		View layout = inflater.inflate(R.layout.fragment_main, container, false);
-		ButterKnife.bind(this, layout);
+		return inflater.inflate(R.layout.fragment_main, container, false);
+	}
 
-		return layout;
+	@Override
+	public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		ButterKnife.bind(this, view);
 	}
 
 	@Override

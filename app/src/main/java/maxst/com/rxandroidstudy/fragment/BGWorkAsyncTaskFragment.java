@@ -1,5 +1,6 @@
 package maxst.com.rxandroidstudy.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +39,7 @@ public class BGWorkAsyncTaskFragment extends Fragment {
 
 	private LogAdapter logAdapter;
 	private List<String> logList;
-	private AsyncTask<Void, Void, Void> asyncTask;
+	private AsyncTask asyncTask;
 
 	public BGWorkAsyncTaskFragment() {
 		// Required empty public constructor
@@ -54,6 +57,7 @@ public class BGWorkAsyncTaskFragment extends Fragment {
 				try {
 					Thread.sleep(3000);
 				} catch (InterruptedException e) {
+					// TODO : Null pointer exception when close fragment before thread completion
 					getActivity().runOnUiThread(() -> {
 								addLog("Error occurred!!");
 								progressBar.setVisibility(View.INVISIBLE);
@@ -66,9 +70,12 @@ public class BGWorkAsyncTaskFragment extends Fragment {
 			@Override
 			protected void onPostExecute(Void aVoid) {
 				addLog("Thread completed");
+				// TODO : Null pointer exception when close fragment before thread completion
 				progressBar.setVisibility(View.INVISIBLE);
 			}
 		};
+
+//		asyncTask = new AsyncTaskWorker(getActivity(), this, progressBar);
 	}
 
 	@Override
@@ -128,4 +135,55 @@ public class BGWorkAsyncTaskFragment extends Fragment {
 			super(context, R.layout.item_log, R.id.item_log, logs);
 		}
 	}
+
+	private static class AsyncTaskWorker extends AsyncTask {
+
+		WeakReference<View> viewWeakReference;
+		WeakReference<Activity> activityWeakReference;
+		WeakReference<BGWorkAsyncTaskFragment> bgWorkAsyncTaskFragmentWeakReference;
+
+		AsyncTaskWorker(Activity activity, BGWorkAsyncTaskFragment fragment, View view) {
+			activityWeakReference = new WeakReference<>(activity);
+			bgWorkAsyncTaskFragmentWeakReference = new WeakReference<>(fragment);
+			viewWeakReference = new WeakReference<>(view);
+		}
+
+		@Override
+		protected Void doInBackground(Object[] params) {
+			BGWorkAsyncTaskFragment fragment = bgWorkAsyncTaskFragmentWeakReference.get();
+			Activity activity = activityWeakReference.get();
+			View view = viewWeakReference.get();
+
+			if (fragment == null || activity == null || view == null) {
+				return null;
+			}
+
+			fragment.addLog("performing long operation");
+
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				activity.runOnUiThread(() -> {
+					fragment.addLog("Error occurred!!");
+					view.setVisibility(View.INVISIBLE);
+				});
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Object aVoid) {
+			BGWorkAsyncTaskFragment fragment = bgWorkAsyncTaskFragmentWeakReference.get();
+			View view = viewWeakReference.get();
+
+			if (fragment == null || view == null) {
+				return;
+			}
+
+			fragment.addLog("Thread completed");
+			view.setVisibility(View.INVISIBLE);
+		}
+	}
+
+	;
 }
