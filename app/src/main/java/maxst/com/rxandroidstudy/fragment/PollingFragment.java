@@ -33,8 +33,8 @@ public class PollingFragment extends Fragment {
 
 	private static final String TAG = PollingFragment.class.getSimpleName();
 
-	private static final int INITIAL_DELAY = 0;
-	private static final int POLLING_INTERVAL = 1000;
+	private static final int INITIAL_DELAY = 2000;
+	private static final int POLLING_INTERVAL = 500;
 	private static final int POLL_COUNT = 3;
 
 	@Bind(R.id.list_threading_log)
@@ -74,8 +74,7 @@ public class PollingFragment extends Fragment {
 		int pollingCount = POLL_COUNT;
 
 		compositeSubscription.add(
-				Observable.interval(INITIAL_DELAY, POLLING_INTERVAL, TimeUnit.MICROSECONDS)
-//				Observable.interval(INITIAL_DELAY, POLLING_INTERVAL * 2, TimeUnit.MILLISECONDS)
+				Observable.interval(INITIAL_DELAY, POLLING_INTERVAL, TimeUnit.MILLISECONDS)
 						.map(this::doNetworkCallAndStringResult)
 						.take(pollingCount)
 						.doOnSubscribe(() -> {
@@ -116,12 +115,9 @@ public class PollingFragment extends Fragment {
 	private int count = 0;
 
 	private String doNetworkCallAndStringResult(long attempt) {
+//		addLog("Thread id " + Thread.currentThread().getId());
 		try {
-			if (attempt == 4) {
-				Thread.sleep(3000);
-			} else {
-				Thread.sleep(1000);
-			}
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
