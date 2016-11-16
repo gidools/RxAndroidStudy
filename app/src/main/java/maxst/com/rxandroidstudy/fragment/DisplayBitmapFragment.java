@@ -68,13 +68,6 @@ public class DisplayBitmapFragment extends Fragment {
 		// Required empty public constructor
 	}
 
-	public static DisplayBitmapFragment newInstance(String param1, String param2) {
-		DisplayBitmapFragment fragment = new DisplayBitmapFragment();
-		Bundle args = new Bundle();
-		fragment.setArguments(args);
-		return fragment;
-	}
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 							 Bundle savedInstanceState) {
