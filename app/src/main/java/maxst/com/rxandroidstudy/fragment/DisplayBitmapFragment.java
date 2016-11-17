@@ -114,6 +114,8 @@ public class DisplayBitmapFragment extends Fragment {
 					return;
 				}
 
+				InputStream responseStream = null;
+
 				try {
 					HttpURLConnection connection =
 							(HttpURLConnection) new URL(url).openConnection();
@@ -123,7 +125,7 @@ public class DisplayBitmapFragment extends Fragment {
 					connection.setDoInput(true);
 					connection.setConnectTimeout(10 * 1000);
 					connection.setReadTimeout(10 * 1000);
-					InputStream responseStream = connection.getInputStream();
+					responseStream = connection.getInputStream();
 					String response = drainStream(responseStream);
 					responseStream.close();
 					connection.disconnect();
@@ -131,10 +133,80 @@ public class DisplayBitmapFragment extends Fragment {
 				} catch (IOException e) {
 					observer.onError(e);
 				} finally {
+					try {
+						if (responseStream != null) {
+							responseStream.close();
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 					observer.onCompleted();
 				}
 			}
 		});
+	}
+
+	private static Observable<Bitmap> getBitmapObservableFromRemote(String url) {
+		return Observable.create(observer -> {
+			if (observer.isUnsubscribed()) {
+				return;
+			}
+
+			InputStream responseStream = null;
+			try {
+				HttpURLConnection connection =
+						(HttpURLConnection) new URL(url).openConnection();
+
+				connection.setRequestMethod("GET");
+				connection.setUseCaches(false);
+				connection.setDoInput(true);
+				connection.setConnectTimeout(10 * 1000);
+				connection.setReadTimeout(10 * 1000);
+				responseStream = connection.getInputStream();
+				Bitmap myBitmap = BitmapFactory.decodeStream(responseStream);
+				connection.disconnect();
+				observer.onNext(myBitmap);
+			} catch (Exception e) {
+				observer.onError(e);
+			} finally {
+				try {
+					if (responseStream != null) {
+						responseStream.close();
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				observer.onCompleted();
+			}
+		});
+	}
+
+	private static void loadImage(ImageView imageView, String url) {
+		if (cancelPotentialWork(imageView, url)) {
+			Subscription subscription = getBitmapObservableFromRemote(url)
+					.subscribeOn(Schedulers.io())
+					.observeOn(AndroidSchedulers.mainThread())
+					.subscribe(imageView::setImageBitmap
+							, onError -> Log.d(TAG, "Error : " + onError.getMessage())
+							, () -> Log.d(TAG, "Completed"));
+
+			imageView.setTag(new SubscriberMap(subscription, url));
+		}
+	}
+
+	private static boolean cancelPotentialWork(ImageView imageView, String url) {
+		final Object subscriberMap = imageView.getTag();
+		if (subscriberMap instanceof SubscriberMap) {
+			if (url.equals(((SubscriberMap) subscriberMap).data)
+//						&& !((SubscriberMap) subscriberMap).subscription.isUnsubscribed()
+					) {
+				return false;
+			}
+
+			((SubscriberMap) subscriberMap).subscription.unsubscribe();
+		}
+
+		return true;
 	}
 
 	private static String drainStream(InputStream in) {
@@ -185,60 +257,6 @@ public class DisplayBitmapFragment extends Fragment {
 			loadImage(image, exhibition.mainImgUrl);
 
 			return convertView;
-		}
-
-		private void loadImage(ImageView imageView, String url) {
-			if (cancelPotentialWork(imageView, url)) {
-				Subscription subscription = getBitmapObservableFromRemote(url)
-						.subscribeOn(Schedulers.io())
-						.observeOn(AndroidSchedulers.mainThread())
-						.subscribe(imageView::setImageBitmap
-								, onError -> Log.d(TAG, "Error : " + onError.getMessage())
-								, () -> Log.d(TAG, "Completed"));
-
-				imageView.setTag(new SubscriberMap(subscription, url));
-			}
-		}
-
-		private boolean cancelPotentialWork(ImageView imageView, String url) {
-			final Object subscriberMap = imageView.getTag();
-			if (subscriberMap instanceof SubscriberMap) {
-				if (url.equals(((SubscriberMap) subscriberMap).data)
-//						&& !((SubscriberMap) subscriberMap).subscription.isUnsubscribed()
-						) {
-					return false;
-				}
-
-				((SubscriberMap) subscriberMap).subscription.unsubscribe();
-			}
-
-			return true;
-		}
-
-		private Observable<Bitmap> getBitmapObservableFromRemote(String url) {
-			return Observable.create(observer -> {
-				if (observer.isUnsubscribed()) {
-					return;
-				}
-				try {
-					HttpURLConnection connection =
-							(HttpURLConnection) new URL(url).openConnection();
-
-					connection.setRequestMethod("GET");
-					connection.setUseCaches(false);
-					connection.setDoInput(true);
-					connection.setConnectTimeout(10 * 1000);
-					connection.setReadTimeout(10 * 1000);
-					InputStream responseStream = connection.getInputStream();
-					Bitmap myBitmap = BitmapFactory.decodeStream(responseStream);
-					observer.onNext(myBitmap);
-				} catch (Exception e) {
-					observer.onError(e);
-				} finally {
-					observer.onCompleted();
-				}
-
-			});
 		}
 	}
 
